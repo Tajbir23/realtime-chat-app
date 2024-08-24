@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface SignUpFormState {
   name: string;
   username: string;
   email: string;
-  photo: File | null;
+  photoUrl: string;
   password: string;
 }
 
@@ -13,9 +14,11 @@ const Signup: React.FC = () => {
     name: "",
     username: "",
     email: "",
-    photo: null,
+    photoUrl: "",
     password: "",
   });
+
+  const navigate = useNavigate()
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -27,16 +30,60 @@ const Signup: React.FC = () => {
     }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setFormState((prevState) => ({
-      ...prevState,
-      photo: file,
-    }));
-  };
+const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0] || null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const image = new FormData()
+  if (!file) return;
+
+  // const image = {image: file}
+  image.append('image', file)
+  const response = await fetch(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGE_SECRET}`, {
+    method: "POST",
+    // headers: {
+    //   "Content-Type": "multipart/form-data",
+    // },
+    body: image
+  });
+
+  const data = await response.json();
+
+  console.log(data)
+  if(!data.data.url){
+    alert("Failed to upload image")
+    return;
+  }
+  const url = data.data.url
+  console.log(url)
+
+  setFormState((prevState) => ({
+    ...prevState,
+    photoUrl: url,
+  }));
+};
+
+
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API}/api/signup`,{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formState),
+      })
+      const data = await response.json();
+
+      if(data.token){
+        localStorage.setItem('token', data.token)
+        navigate('/')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
     console.log(formState); // Handle form submission logic here
   };
 
@@ -90,6 +137,7 @@ const Signup: React.FC = () => {
       </div>
 
       <div className="mb-4">
+        {formState.photoUrl && <img src={formState.photoUrl} className="h-20" alt="image not uploaded" />}
         <label className="block text-sm font-medium mb-2" htmlFor="photo">
           Photo
         </label>
