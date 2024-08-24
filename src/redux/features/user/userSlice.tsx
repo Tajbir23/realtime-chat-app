@@ -1,13 +1,7 @@
 import { createSlice, } from "@reduxjs/toolkit";
-import userTypeCheck from '../../typeCheck/user';
 import user from '../../thunks/userThunks'
+import userState from "../../typeCheck/userState";
 
-
-interface userState{
-    isLoading: boolean;
-    user: userTypeCheck | null;
-    error: string | null;
-}
 
 const initialState: userState = {
     isLoading: false,
