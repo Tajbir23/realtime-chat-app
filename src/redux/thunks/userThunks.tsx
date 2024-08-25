@@ -9,6 +9,7 @@ const user = createAsyncThunk('user/userValidation', async() => {
     })
 
     const data = response.json()
+    console.log('redux thunk',data)
     return data
 })
 
