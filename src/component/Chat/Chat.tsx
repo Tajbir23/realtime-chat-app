@@ -1,46 +1,141 @@
-import { FaToggleOn } from "react-icons/fa"
-import { useDispatch, useSelector } from "react-redux"
-import { toggle } from "../../redux/features/toggle/toggleSlice";
-import ToggleStateCheck from "../../redux/typeCheck/toggle";
+import { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import userTypeCheck from "../../redux/typeCheck/user"
+import { io } from "socket.io-client";
+import { useDispatch, useSelector } from "react-redux";
+import messageThunk from "../../redux/thunks/messageThunks";
+import { AppDispatch } from "../../redux/app/store";
+import MessageState from "../../redux/typeCheck/messageState";
+import { adMessage } from "../../redux/features/message/messageSlice";
 
 
-const ChatLayout = () => {
-  const dispatch = useDispatch();
-  const toggleValue: boolean = useSelector((state: ToggleStateCheck) => state.toggle.isOpen)
+const socket = io(`${import.meta.env.VITE_API}`);
+
+const ChatLayout: React.FC = () => {
+  const {id} = useParams()
+  const [user, setUser] = useState<userTypeCheck>()
+  const [currentPage, setCurrentPage] = useState(1)
+  const dispatch = useDispatch<AppDispatch>()
+  const {messages, isLoading, error, page, hasMore} = useSelector((state: {message: MessageState}) => state.message)
+  const myInfo = useSelector((state: {user: {user: userTypeCheck}}) => state.user.user)
+  const navigate = useNavigate()
+  console.log(error)
+
+  socket.on("message", (message) => {
+    console.log('this is realtime message',message)
+    dispatch(adMessage(message))
+  })
+
+  useEffect(() => {
+    const data: {currentPage: number; id: string} = {
+      currentPage,
+      id: id || ""
+    }
+    dispatch(messageThunk(data))
+  },[dispatch, id, currentPage])
+
+useEffect(() => {
+  const user = async () => {
+    const token = localStorage.getItem('token')
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API}/api/user/${id}`,{
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      
+      const data = await response.json()
+      setUser(data)
+
+      if(response.status === 401 || response.status === 403){
+        localStorage.removeItem('token')
+        return navigate('/login')
+      }
+    } catch (error) {
+      console.log(error)
+      localStorage.getItem('token')
+      return navigate('/login')
+    }
+  }
+
+  user()
+}, [id, navigate]);
+
+
+
+const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  const message = (e.target as HTMLFormElement).message.value;
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API}/api/message`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user,
+        message,
+      }),
+    })
+
+    const result = await response.json();
+    console.log('chat result',result)
+  } catch (error) {
+    console.log(error)
+  }
+};
 
   return (
-    <div className="w-full flex flex-col">
-      <div className="flex gap-5 items-center p-5 border-b border-black fixed w-full">
-        {!toggleValue && <FaToggleOn onClick={() => dispatch(toggle())} className="text-4xl cursor-pointer" />}
-        <h1 className="text-xl font-bold">Chat with <span className="text-green-800">Omuk</span></h1>
+    <div className="sm:ml-80 w-full">
+  <div className="h-screen flex w-full">
+    {/* Main Chat Area */}
+    <div className="flex-grow flex flex-col bg-gray-100 w-full">
+      {/* Chat Header */}
+      <div className="p-4 bg-white shadow-md">
+        <h2 className="text-lg font-bold">Chat with {user?.username}</h2>
       </div>
 
-      <div className="mt-20">
-        {/* opponent message start */}
-        <div className="flex gap-5">
-          <img className="h-8 w-8 rounded-full" src="https://i.ibb.co/6XLHVGH/12555.jpg" alt="image not found" />
-          <div>
-            <h1 className="font-semibold mb-3">Tajbir islam</h1>
-            <h1 className="max-w-md bg-gray-500 p-5 rounded-xl break-words">Hello worldaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa </h1>
+      {/* Chat Messages */}
+      <div className="flex-grow p-4 overflow-y-auto w-full">
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={`mb-4 flex ${msg.receiverUsername === user?.username || msg.senderUsername === user?.username ? 'block' : 'hidden'} ${msg.senderUsername === myInfo.username ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`p-3 rounded-lg max-w-xs ${msg.senderUsername === myInfo.username ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-900'}`}
+            >
+              {msg.message}
+            </div>
           </div>
-        </div>
-        {/* opponent message end */}
-
-        {/* my message start */}
-        <div className="flex gap-5 float-right">
-          <div>
-            <h1 className="max-w-md bg-green-500 p-5 rounded-xl break-words">Hello worldaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa </h1>
-          </div>
-        </div>
-        {/* my message end */}
+        ))}
       </div>
 
-      <form className="w-full p-5 border-t border-black fixed bottom-0 mr-5 flex items-center gap-5 mt-auto">
-        <input type="text" placeholder="Enter your text..." className=" py-2 px-3 border border-black outline-none rounded-md" />
-        <input type="file" />
-        <button type="submit" className="bg-green-500 text-white py-2 px-3 rounded-md">Send</button>
+      {/* Input Area */}
+      <form onSubmit={handleSubmit} className="p-4 bg-white flex w-full">
+        <input
+          type="text"
+          className="flex-grow p-2 border rounded-md mr-2"
+          placeholder="Type a message"
+          id="message"
+          name="message"
+          required
+        />
+        <button
+          className="bg-blue-500 text-white p-2 rounded-md"
+          type="submit"
+        >
+          Send
+        </button>
       </form>
     </div>
+  </div>
+</div>
+
+
   )
 }
 

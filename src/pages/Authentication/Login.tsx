@@ -25,10 +25,10 @@ const Login: React.FC = () => {
       if(data.token){
         console.log(data.token)
         localStorage.setItem('token', data.token)
-        navigate('/')
+        return navigate('/')
       }
     } catch (error) {
-      console.log(error)
+      console.log(error.message)
     }
 
   };
@@ -75,6 +75,7 @@ const Login: React.FC = () => {
             </button>
           </div>
         </form>
+        <p>if you dont have any account please <a className='text-blue-800 underline' href='/signup'>SignUp</a></p>
       </div>
     </div>
   );

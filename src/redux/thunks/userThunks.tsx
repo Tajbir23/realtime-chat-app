@@ -1,4 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
+import { socket } from "../../hooks/useSocket"
+
 
 const user = createAsyncThunk('user/userValidation', async() => {
     const token = localStorage.getItem('token')
@@ -8,7 +10,12 @@ const user = createAsyncThunk('user/userValidation', async() => {
         }
     })
 
-    const data = response.json()
+    const data = await response.json()
+    if(response.status === 404 || response.status === 401 || response.status === 403){
+        localStorage.removeItem('token')
+        socket.emit('logout')
+        throw new Error('Unauthorized')
+    }
     console.log('redux thunk',data)
     return data
 })

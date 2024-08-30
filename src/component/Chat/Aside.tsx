@@ -1,57 +1,113 @@
-
-import { FaToggleOff } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toggle } from "../../redux/features/toggle/toggleSlice";
 import { io } from "socket.io-client";
 import { useState } from "react";
 import userTypeCheck from "../../redux/typeCheck/user";
+import ToggleStateCheck from "../../redux/typeCheck/toggle";
+import { NavLink } from "react-router-dom";
 
-
-
-const socket = io(`${import.meta.env.VITE_API}`)
+const socket = io(`${import.meta.env.VITE_API}`);
 
 const Aside = () => {
-const [users, setUsers] = useState<userTypeCheck[]>([])
-    const user = useSelector((state: {user: {user: userTypeCheck}}) => state.user.user)
-    const dispatch = useDispatch()
+  const [users, setUsers] = useState<userTypeCheck[]>([]);
+  const user = useSelector(
+    (state: { user: { user: userTypeCheck } }) => state.user.user
+  );
+  const isOpen = useSelector((state: ToggleStateCheck) => state.toggle.isOpen);
+  const dispatch = useDispatch();
 
-    socket.on('users', (users: userTypeCheck[]) => {
-        setUsers(users)
-    })
+  socket.on("users", (users: userTypeCheck[]) => {
+    setUsers(users);
+  });
 
-    console.log(users)
+  console.log(users);
 
-    
   return (
-    <div className="w-full h-full sm:w-[35%] md:w-1/3 lg:w-80">
-        <aside className="w-full h-full sm:w-[35%] md:w-1/3 lg:w-80 fixed overflow-auto">
-            <div>
-                <div className="flex items-center gap-5 border-b border-black p-5 bg-gray-500 fixed w-full sm:w-[35%] md:w-1/3 lg:w-80">
-                    <img className="h-14 w-14 rounded-full border-blue-900 border-[4px]" src={user?.photoUrl} alt="image not found" />
-                    <div>
-                        <h1 className="text-lg font-bold">{user?.name}</h1>
-                        <p>{user?.isActive ? 'Active' : 'Offline'}</p>
-                    </div>
-                    <FaToggleOff onClick={() => dispatch(toggle())} className="ml-auto text-4xl cursor-pointer" />
-                </div>
+    <>
+      <button
+        onClick={() => dispatch(toggle())}
+        data-drawer-target="default-sidebar"
+        data-drawer-toggle="default-sidebar"
+        aria-controls="default-sidebar"
+        type="button"
+        className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+      >
+        <span className="sr-only">Open sidebar</span>
+        <svg
+          className="w-6 h-6"
+          aria-hidden="true"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            clipRule="evenodd"
+            fillRule="evenodd"
+            d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
+          ></path>
+        </svg>
+      </button>
 
-                <div className="pt-28 px-5 flex flex-col gap-5">
-                    {users?.map((item: userTypeCheck) => {
-                        return <div className="flex items-center gap-5 cursor-pointer hover:bg-gray-500 p-2">
-                        <img className="h-14 w-14 rounded-full border-blue-900 border-[4px]" src={item.photoUrl} alt="image not found" />
-                        <div>
-                            <h1 className="text-lg font-bold">{item.name}</h1>
-                            <p>{item.isActive ? 'Active' : 'Offline'}</p>
-                        </div>
-                        </div>
-                    })}
-                </div>
+      <aside
+        id="default-sidebar"
+        className={`fixed top-0 left-0 z-40 w-80 h-screen transition-transform ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } sm:translate-x-0`}
+        aria-label="Sidebar"
+      >
+        <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+          <div className="flex justify-between items-center border-b-2 border-black border-dotted p-5">
+            <div className="flex items-center gap-4">
+              <img
+                className="h-8 w-8 rounded-full border-blue-900 border-[4px]"
+                src={user?.photoUrl}
+                alt="image not found"
+              />
+              <div>
+                <h1 className="text-lg font-bold">{user?.name}</h1>
+                <p>Active</p>
+              </div>
             </div>
+            <div className="cursor-pointer inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" onClick={() => dispatch(toggle())}>
+              <span className="sr-only">Open sidebar</span>
+              <svg
+                className="w-6 h-6"
+                aria-hidden="true"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  clipRule="evenodd"
+                  fillRule="evenodd"
+                  d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+          <ul className="space-y-2 font-medium mt-5">
+            {users?.map(user => {
+                return <li>
+                <NavLink
+                  to={`/chat/${user._id}`}
+                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                >
+                  <img
+                    src={user.photoUrl}
+                    className="h-8 w-8 rounded-full"
+                    alt="image not found"
+                  />
+                  <span className="ms-3">{user.name}</span>
+                  <p className="ms-4 text-sm">{user.isActive ? <div className="h-2 w-2 rounded-full bg-blue-700"></div> : <div className="h-2 w-2 rounded-full bg-red-700"></div>}</p>
+                </NavLink>
+              </li>
+            })}
+          </ul>
+        </div>
+      </aside>
 
-            
-        </aside>
-    </div>
-  )
-}
+    </>
+  );
+};
 
-export default Aside
+export default Aside;

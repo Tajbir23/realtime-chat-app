@@ -37,35 +37,40 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
   if (!file) return;
 
   // const image = {image: file}
-  image.append('image', file)
-  const response = await fetch(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGE_SECRET}`, {
-    method: "POST",
-    // headers: {
-    //   "Content-Type": "multipart/form-data",
-    // },
-    body: image
-  });
+  image.append('file', file)
+  image.append('upload_preset', 'your-upload-preset')
 
-  const data = await response.json();
-
-  console.log(data)
-  if(!data.data.url){
-    alert("Failed to upload image")
-    return;
+  console.log(image)
+  try {
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUDNAME}/image/upload`, {
+      method: "POST",
+      body: image
+    });
+  
+    const data = await response.json();
+  
+    console.log(data)
+    if(!data.secure_url){
+      alert("Failed to upload image")
+      return;
+    }
+    const url = data.secure_url
+    console.log(url)
+  
+    setFormState((prevState) => ({
+      ...prevState,
+      photoUrl: url,
+    }));
+  } catch (error) {
+    console.log(error?.message)
   }
-  const url = data.data.url
-  console.log(url)
-
-  setFormState((prevState) => ({
-    ...prevState,
-    photoUrl: url,
-  }));
 };
 
 
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log(formState)
     try {
       const response = await fetch(`${import.meta.env.VITE_API}/api/signup`,{
         method: "POST",
@@ -78,13 +83,16 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
 
       if(data.token){
         localStorage.setItem('token', data.token)
-        navigate('/')
+        return navigate('/')
       }
+      
+      // if(response.status === 500){
+      //   console.log(response.json())
+      // }
     } catch (error) {
       console.log(error)
     }
 
-    console.log(formState); // Handle form submission logic here
   };
 
   return (
@@ -168,7 +176,7 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
 
       <button
         type="submit"
-        className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+        className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-800"
       >
         Sign Up
       </button>

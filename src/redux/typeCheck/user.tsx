@@ -5,6 +5,7 @@ interface userTypeCheck{
     email: string;
     photoUrl: string;
     isActive: boolean;
+    _id: string;
 }
 
 export default userTypeCheck
