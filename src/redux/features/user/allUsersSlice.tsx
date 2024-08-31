@@ -32,21 +32,10 @@ const allUsersSlice = createSlice({
             state.isLoading = false
             state.error = null
 
-            const fetchUsers = action.payload.users || []
-            fetchUsers.forEach((newUser: userTypeCheck) => {
-                const existingUserIndex = state.users.findIndex(user => user._id === newUser._id)
-                
-                if (existingUserIndex !== -1) {
-                    // Update the existing user
-                    state.users[existingUserIndex] = {
-                        ...state.users[existingUserIndex],
-                        ...newUser
-                    };
-                } else {
-                    // Add the new user to the state
-                    state.users.push(newUser);
-                }
-            })
+            const newUser = action.payload as userTypeCheck[]
+            const existingUser = new Set(state.users.map(user => user._id))
+            const uniqueNewUser = newUser.filter(user =>!existingUser.has(user._id))
+            state.users = [...state.users,...uniqueNewUser]
 
             console.log("all users", state.users)
             // state.page = action.payload.page
