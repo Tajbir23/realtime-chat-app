@@ -32,12 +32,23 @@ const allUsersSlice = createSlice({
             state.isLoading = false
             state.error = null
 
-            const newUsers = action.payload.users.filter((newUser: userTypeCheck) => {
-                return !state.users.some(user => user._id === newUser._id)
+            const fetchUsers = action.payload.users || []
+            fetchUsers.forEach((newUser: userTypeCheck) => {
+                const existingUserIndex = state.users.findIndex(user => user._id === newUser._id)
+                
+                if (existingUserIndex !== -1) {
+                    // Update the existing user
+                    state.users[existingUserIndex] = {
+                        ...state.users[existingUserIndex],
+                        ...newUser
+                    };
+                } else {
+                    // Add the new user to the state
+                    state.users.push(newUser);
+                }
             })
 
-            console.log("new user", newUsers)
-            state.users = [...state.users,...newUsers]
+            console.log("all users", state.users)
             // state.page = action.payload.page
             // state.hasMore = action.payload.hasMore
             // state.totalUsers = action.payload.totalUsers

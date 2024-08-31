@@ -6,6 +6,9 @@ import { NavLink } from "react-router-dom";
 import { socket } from "../../hooks/useSocket";
 import { replaceUser } from "../../redux/features/user/allUsersSlice";
 import allUsersState from "../../redux/typeCheck/allUserState";
+import { useEffect } from "react";
+import allUsers from "../../redux/thunks/allUserThunks";
+import { AppDispatch } from "../../redux/app/store";
 
 // const socket = io(`${import.meta.env.VITE_API}`);
 
@@ -15,7 +18,11 @@ const Aside = () => {
   );
   const users = useSelector((state: {allUsers: allUsersState}) => state.allUsers.users)
   const isOpen = useSelector((state: ToggleStateCheck) => state.toggle.isOpen);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(allUsers())
+  },[dispatch])
 
   socket.on("users", (user: userTypeCheck[]) => {
     dispatch(replaceUser(user))
