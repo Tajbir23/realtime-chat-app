@@ -7,9 +7,10 @@ import messageThunk from "../../redux/thunks/messageThunks";
 import { AppDispatch } from "../../redux/app/store";
 import MessageState from "../../redux/typeCheck/messageState";
 import { adMessage } from "../../redux/features/message/messageSlice";
+import { socket } from "../../hooks/useSocket";
 
 
-const socket = io(`${import.meta.env.VITE_API}`);
+// const socket = io(`${import.meta.env.VITE_API}`);
 
 const ChatLayout: React.FC = () => {
   const {id} = useParams()

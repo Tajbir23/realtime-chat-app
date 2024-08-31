@@ -1,26 +1,27 @@
 import { useDispatch, useSelector } from "react-redux";
 import { toggle } from "../../redux/features/toggle/toggleSlice";
-import { io } from "socket.io-client";
-import { useState } from "react";
 import userTypeCheck from "../../redux/typeCheck/user";
 import ToggleStateCheck from "../../redux/typeCheck/toggle";
 import { NavLink } from "react-router-dom";
+import { socket } from "../../hooks/useSocket";
+import { replaceUser } from "../../redux/features/user/allUsersSlice";
+import allUsersState from "../../redux/typeCheck/allUserState";
 
-const socket = io(`${import.meta.env.VITE_API}`);
+// const socket = io(`${import.meta.env.VITE_API}`);
 
 const Aside = () => {
-  const [users, setUsers] = useState<userTypeCheck[]>([]);
   const user = useSelector(
     (state: { user: { user: userTypeCheck } }) => state.user.user
   );
+  const users = useSelector((state: {allUsers: allUsersState}) => state.allUsers.users)
   const isOpen = useSelector((state: ToggleStateCheck) => state.toggle.isOpen);
   const dispatch = useDispatch();
 
-  socket.on("users", (users: userTypeCheck[]) => {
-    setUsers(users);
+  socket.on("users", (user: userTypeCheck[]) => {
+    dispatch(replaceUser(user))
   });
 
-  console.log(users);
+  console.log(users)
 
   return (
     <>
@@ -86,20 +87,20 @@ const Aside = () => {
             </div>
           </div>
           <ul className="space-y-2 font-medium mt-5">
-            {users?.map(user => {
+            {users?.map(chatUser => {
                 return <li>
-                <NavLink
-                  to={`/chat/${user._id}`}
+                {chatUser._id !== user._id && <NavLink
+                  to={`/chat/${chatUser._id}`}
                   className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                 >
                   <img
-                    src={user.photoUrl}
+                    src={chatUser.photoUrl}
                     className="h-8 w-8 rounded-full"
                     alt="image not found"
                   />
-                  <span className="ms-3">{user.name}</span>
-                  <p className="ms-4 text-sm">{user.isActive ? <div className="h-2 w-2 rounded-full bg-blue-700"></div> : <div className="h-2 w-2 rounded-full bg-red-700"></div>}</p>
-                </NavLink>
+                  <span className="ms-3">{chatUser.name}</span>
+                  <p className="ms-4 text-sm">{chatUser.isActive ? <div className="h-2 w-2 rounded-full bg-blue-700"></div> : <div className="h-2 w-2 rounded-full bg-red-700"></div>}</p>
+                </NavLink>}
               </li>
             })}
           </ul>

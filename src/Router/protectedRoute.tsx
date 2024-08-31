@@ -3,9 +3,9 @@ import user from "../redux/thunks/userThunks";
 import { useEffect } from "react";
 import { AppDispatch } from "../redux/app/store";
 import { Navigate } from "react-router-dom";
-import { io } from "socket.io-client";
+import { socket } from "../hooks/useSocket";
 
-const socket = io(`${import.meta.env.VITE_API}`)
+// const socket = io(`${import.meta.env.VITE_API}`)
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     
@@ -28,6 +28,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     socket.emit('connected', userData.user?.email)
     
     if(userData?.user?.error || !token){
+      localStorage.removeItem('token')
       socket.emit('logout')
       return <Navigate to="/login" />
     }
