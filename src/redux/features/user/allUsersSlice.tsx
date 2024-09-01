@@ -15,6 +15,9 @@ const allUsersSlice = createSlice({
     name: 'allUsers',
     initialState,
     reducers: {
+        incrementPage : (state) => {
+            state.page += 1
+        },
         replaceUser: (state, action) => {
             const updateUser = action.payload as userTypeCheck
             

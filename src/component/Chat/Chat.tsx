@@ -99,6 +99,7 @@ const ChatLayout: React.FC = () => {
     user();
   }, [id, navigate]);
 
+  console.log("messages", messages)
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const message = (e.target as HTMLFormElement).message.value;
@@ -139,7 +140,7 @@ const ChatLayout: React.FC = () => {
         <div className="flex-grow flex flex-col bg-gray-100 w-full">
           {/* Chat Header */}
           <div className="p-4 bg-white shadow-md">
-            <h2 className="text-lg font-bold">Chat with {user?.username}</h2>
+            <h2 className="text-lg font-bold">Chat with {user?.name}</h2>
           </div>
 
           {/* Chat Messages */}

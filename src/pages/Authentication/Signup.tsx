@@ -62,7 +62,7 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
       photoUrl: url,
     }));
   } catch (error) {
-    console.log(error?.message)
+    console.log(error)
   }
 };
 

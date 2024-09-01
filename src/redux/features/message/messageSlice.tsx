@@ -40,6 +40,7 @@ const messageSlice = createSlice({
                 state.error = ''
                 const newMessage = action.payload as message[]
 
+                console.log("new message", action.payload)
                 const existingMessage = new Set(state.messages.map(msg => msg._id))
                 
                 const uniqueNewMessage = newMessage.filter(msg => !existingMessage.has(msg._id))

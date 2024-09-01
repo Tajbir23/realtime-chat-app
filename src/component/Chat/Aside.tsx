@@ -9,6 +9,7 @@ import allUsersState from "../../redux/typeCheck/allUserState";
 import { useEffect } from "react";
 import allUsers from "../../redux/thunks/allUserThunks";
 import { AppDispatch } from "../../redux/app/store";
+import Friends from "./friends/Friends";
 
 // const socket = io(`${import.meta.env.VITE_API}`);
 
@@ -38,7 +39,7 @@ const Aside = () => {
         data-drawer-toggle="default-sidebar"
         aria-controls="default-sidebar"
         type="button"
-        className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+        className="inline-flex fixed right-0 items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
       >
         <span className="sr-only">Open sidebar</span>
         <svg
@@ -93,6 +94,10 @@ const Aside = () => {
               </svg>
             </div>
           </div>
+          <ul className="space-y-2 font-medium my-5 pb-5 border-b-2 h-52 overflow-auto">
+            <li className="text-xl font-bold">Friends</li>
+            <Friends />
+          </ul>
           <ul className="space-y-2 font-medium mt-5">
             {users?.map(chatUser => {
                 return <li>
