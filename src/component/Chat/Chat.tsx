@@ -48,10 +48,20 @@ const ChatLayout: React.FC = () => {
     };
   }, [loadMoreMessages]);
 
-  socket.on("message", (message) => {
-    console.log('this is realtime message',message)
-    dispatch(adMessage(message))
-  })
+  useEffect(() => {
+    const handleIncomingMessage = (message: { receiverUsername: string; senderUsername: string; }) => {
+      // Only dispatch the message if it's intended for the current user
+      if (message.receiverUsername === myInfo.username || message.senderUsername === myInfo.username) {
+        dispatch(adMessage(message));
+      }
+    };
+
+    socket.on("message", handleIncomingMessage);
+
+    return () => {
+      socket.off("message", handleIncomingMessage);
+    };
+  }, [dispatch, myInfo.username]);
 
   useEffect(() => {
     if (page === 1 && chatBoxRef.current) {

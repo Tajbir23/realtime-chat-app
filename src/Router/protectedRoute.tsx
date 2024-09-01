@@ -13,7 +13,6 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     const userData = useSelector((state: { user: { isLoading: boolean; user: { error: string; email: string }, error: string; } }) => state.user)
     const token = localStorage.getItem('token')
     
-    console.log(userData)
     useEffect(() => {
         dispatch(user())
     },[dispatch])
