@@ -25,7 +25,7 @@ const messageSlice = createSlice({
 
             console.log("existing message: ", existingMessage?._id)
             if(!existingMessage){
-                state.messages.push(newMessage)
+                state.messages.unshift(newMessage)
             }
 
         }
