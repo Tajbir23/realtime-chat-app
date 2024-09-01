@@ -4,8 +4,9 @@ import userTypeCheck from "../../redux/typeCheck/user";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../redux/app/store";
 import MessageState from "../../redux/typeCheck/messageState";
-import { incrementPage } from "../../redux/features/message/messageSlice";
+import { adMessage, incrementPage } from "../../redux/features/message/messageSlice";
 import messageThunk from "../../redux/thunks/messageThunks";
+import { socket } from "../../hooks/useSocket";
 
 const ChatLayout: React.FC = () => {
   const { id } = useParams();
@@ -46,6 +47,11 @@ const ChatLayout: React.FC = () => {
       }
     };
   }, [loadMoreMessages]);
+
+  socket.on("message", (message) => {
+    console.log('this is realtime message',message)
+    dispatch(adMessage(message))
+  })
 
   useEffect(() => {
     if (page === 1 && chatBoxRef.current) {
@@ -110,6 +116,16 @@ const ChatLayout: React.FC = () => {
       });
 
       const result = await response.json();
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem("token");
+        return navigate("/login");
+      }
+      (e.target as HTMLFormElement).message.value = "";
+      prevScrollHeightRef.current = 0
+      
+      if (scrollRef.current) {
+        scrollRef.current.scrollIntoView({ behavior: "smooth" });
+      }
       console.log("chat result", result);
     } catch (error) {
       console.log(error);
