@@ -33,7 +33,7 @@ const friendsSlice = createSlice({
             state.isLoading = true
         })
         .addCase(friends.fulfilled, (state, action) => {
-            console.log("Payload: ", action.payload)
+            // console.log("Payload: ", action.payload)
             state.isLoading = false
             state.error = ''
             const newFriends = action.payload as userTypeCheck[]

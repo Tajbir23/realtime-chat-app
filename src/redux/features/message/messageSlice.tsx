@@ -23,7 +23,7 @@ const messageSlice = createSlice({
 
             const existingMessage = state.messages.find(msg => msg._id === newMessage._id)
 
-            console.log("existing message: ", existingMessage?._id)
+            // console.log("existing message: ", existingMessage?._id)
             if(!existingMessage){
                 state.messages.unshift(newMessage)
             }
@@ -40,7 +40,7 @@ const messageSlice = createSlice({
                 state.error = ''
                 const newMessage = action.payload as message[]
 
-                console.log("new message", action.payload)
+                // console.log("new message", action.payload)
                 const existingMessage = new Set(state.messages.map(msg => msg._id))
                 
                 const uniqueNewMessage = newMessage.filter(msg => !existingMessage.has(msg._id))

@@ -29,7 +29,7 @@ const Aside = () => {
     dispatch(replaceUser(user))
   });
 
-  console.log(users)
+  // console.log(users)
 
   return (
     <>
@@ -64,7 +64,7 @@ const Aside = () => {
         } sm:translate-x-0`}
         aria-label="Sidebar"
       >
-        <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+        <div className="h-full px-3 py-4 bg-gray-50 dark:bg-gray-800 overflow-auto">
           <div className="flex justify-between items-center border-b-2 border-black border-dotted p-5">
             <div className="flex items-center gap-4">
               <img

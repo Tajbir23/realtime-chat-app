@@ -40,7 +40,7 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
   image.append('file', file)
   image.append('upload_preset', 'your-upload-preset')
 
-  console.log(image)
+  // console.log(image)
   try {
     const response = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUDNAME}/image/upload`, {
       method: "POST",
@@ -49,13 +49,13 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
   
     const data = await response.json();
   
-    console.log(data)
+    // console.log(data)
     if(!data.secure_url){
       alert("Failed to upload image")
       return;
     }
     const url = data.secure_url
-    console.log(url)
+    // console.log(url)
   
     setFormState((prevState) => ({
       ...prevState,
@@ -70,7 +70,7 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log(formState)
+    // console.log(formState)
     try {
       const response = await fetch(`${import.meta.env.VITE_API}/api/signup`,{
         method: "POST",

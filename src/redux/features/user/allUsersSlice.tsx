@@ -41,7 +41,7 @@ const allUsersSlice = createSlice({
             const uniqueNewUser = newUser.filter(user =>!existingUser.has(user._id))
             state.users = [...state.users,...uniqueNewUser]
 
-            console.log("all users", state.users)
+            // console.log("all users", state.users)
             // state.page = action.payload.page
             // state.hasMore = action.payload.hasMore
             // state.totalUsers = action.payload.totalUsers

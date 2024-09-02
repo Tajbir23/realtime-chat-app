@@ -50,18 +50,17 @@ const ChatLayout: React.FC = () => {
 
   useEffect(() => {
     const handleIncomingMessage = (message: { receiverUsername: string; senderUsername: string; }) => {
+      console.log("Message",message)
       // Only dispatch the message if it's intended for the current user
-      if (message.receiverUsername === myInfo.username || message.senderUsername === myInfo.username) {
+      if (message?.receiverUsername === myInfo?.username || message?.senderUsername === myInfo?.username) {
         dispatch(adMessage(message));
       }
     };
 
     socket.on("message", handleIncomingMessage);
 
-    return () => {
-      socket.off("message", handleIncomingMessage);
-    };
-  }, [dispatch, myInfo.username]);
+    
+  }, [dispatch, myInfo?.username]);
 
   useEffect(() => {
     if (page === 1 && chatBoxRef.current) {
@@ -109,7 +108,7 @@ const ChatLayout: React.FC = () => {
     user();
   }, [id, navigate]);
 
-  console.log("messages", messages)
+  // console.log("messages", messages)
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const message = (e.target as HTMLFormElement).message.value;
@@ -137,7 +136,7 @@ const ChatLayout: React.FC = () => {
       if (scrollRef.current) {
         scrollRef.current.scrollIntoView({ behavior: "smooth" });
       }
-      console.log("chat result", result);
+      // console.log("chat result", result);
     } catch (error) {
       console.log(error);
     }

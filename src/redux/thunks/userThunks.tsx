@@ -16,7 +16,7 @@ const user = createAsyncThunk('user/userValidation', async() => {
         socket.emit('logout')
         throw new Error('Unauthorized')
     }
-    console.log('redux thunk',data)
+    // console.log('redux thunk',data)
     return data
 })
 

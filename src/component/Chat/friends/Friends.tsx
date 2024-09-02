@@ -15,7 +15,7 @@ const Friends : React.FC = () => {
         dispatch(friendsThunk(friends.page))
     },[dispatch, friends.page])
 
-    console.log("friends", friends)
+    // console.log("friends", friends)
     return (
         <>
             {friends.friends.map((friend) =>{

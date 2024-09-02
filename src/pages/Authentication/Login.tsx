@@ -9,8 +9,8 @@ const Login: React.FC = () => {
   const handleLogin = async(e: React.FormEvent) => {
     e.preventDefault();
     // Handle login logic here
-    console.log('Email:', email);
-    console.log('Password:', password);
+    // console.log('Email:', email);
+    // console.log('Password:', password);
     try {
       const response = await fetch(`${import.meta.env.VITE_API}/api/login`, {
         method: 'POST',
@@ -23,7 +23,7 @@ const Login: React.FC = () => {
       const data = await response.json();
       
       if(data.token){
-        console.log(data.token)
+        // console.log(data.token)
         localStorage.setItem('token', data.token)
         navigate('/')
       }
