@@ -1,4 +1,7 @@
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 interface SignUpFormState {
@@ -17,6 +20,9 @@ const Signup: React.FC = () => {
     photoUrl: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
+
+  const [error, setError] = useState<string>("");
 
   const navigate = useNavigate()
 
@@ -33,14 +39,13 @@ const Signup: React.FC = () => {
 const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
   const file = e.target.files?.[0] || null;
 
+  setLoading(true)
   const image = new FormData()
   if (!file) return;
 
-  // const image = {image: file}
   image.append('file', file)
   image.append('upload_preset', 'your-upload-preset')
 
-  // console.log(image)
   try {
     const response = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUDNAME}/image/upload`, {
       method: "POST",
@@ -49,19 +54,21 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
   
     const data = await response.json();
   
-    // console.log(data)
     if(!data.secure_url){
-      alert("Failed to upload image")
+      toast.error("image upload failed")
+      setLoading(false)
       return;
     }
+    setLoading(false)
     const url = data.secure_url
-    // console.log(url)
   
     setFormState((prevState) => ({
       ...prevState,
       photoUrl: url,
     }));
   } catch (error) {
+    toast.error("Failed to upload image")
+    setLoading(false)
     console.log(error)
   }
 };
@@ -70,7 +77,6 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
 
-    // console.log(formState)
     try {
       const response = await fetch(`${import.meta.env.VITE_API}/api/signup`,{
         method: "POST",
@@ -86,11 +92,13 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
         navigate('/')
       }
       
-      // if(response.status === 500){
-      //   console.log(response.json())
-      // }
+      if(!response.ok){
+        console.log(data)
+        setError(data.message)
+        return;
+      }
     } catch (error) {
-      console.log(error)
+      console.log((error as Error).message)
     }
 
   };
@@ -145,7 +153,8 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
       </div>
 
       <div className="mb-4">
-        {formState.photoUrl && <img src={formState.photoUrl} className="h-20" alt="image not uploaded" />}
+      {loading && <FontAwesomeIcon icon={faSpinner} spinPulse className="text-4xl" />}
+        {formState.photoUrl && !loading && <img src={formState.photoUrl} className="h-20" alt="image not uploaded" />}
         <label className="block text-sm font-medium mb-2" htmlFor="photo">
           Photo
         </label>
@@ -174,6 +183,7 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
         />
       </div>
 
+      {error && <p className="text-red-500 mb-4">{error}</p>}
       <button
         type="submit"
         className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-800"

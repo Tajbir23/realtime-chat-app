@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import allUsers from "../../redux/thunks/allUserThunks";
 import { AppDispatch } from "../../redux/app/store";
 import Friends from "./friends/Friends";
+import { replaceFriends } from "../../redux/features/user/friendsSlice";
 
 // const socket = io(`${import.meta.env.VITE_API}`);
 
@@ -19,6 +20,7 @@ const Aside = () => {
   );
   const users = useSelector((state: {allUsers: allUsersState}) => state.allUsers.users)
   const isOpen = useSelector((state: ToggleStateCheck) => state.toggle.isOpen);
+  const friends = useSelector((state: {friends: {friends: userTypeCheck[],hasMore: boolean, isLoading:boolean, page: number}}) => state.friends)
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -27,9 +29,16 @@ const Aside = () => {
 
   socket.on("users", (user: userTypeCheck[]) => {
     dispatch(replaceUser(user))
+    for(const friend of friends.friends){
+      if(friend._id === user[0]._id){
+        dispatch(replaceFriends(user))
+      }
+    }
   });
 
-  // console.log(users)
+  
+
+
 
   return (
     <>
@@ -100,8 +109,8 @@ const Aside = () => {
           </ul>
           <ul className="space-y-2 font-medium mt-5">
             {users?.map(chatUser => {
-                return <li>
-                {chatUser._id !== user._id && <NavLink
+                return <li className={`${chatUser.email === user.email ? "hidden" : "block"}`}>
+                <NavLink
                   to={`/chat/${chatUser._id}`}
                   className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                 >
@@ -112,7 +121,7 @@ const Aside = () => {
                   />
                   <span className="ms-3">{chatUser.name}</span>
                   <p className="ms-4 text-sm">{chatUser.isActive ? <div className="h-2 w-2 rounded-full bg-blue-700"></div> : <div className="h-2 w-2 rounded-full bg-red-700"></div>}</p>
-                </NavLink>}
+                </NavLink>
               </li>
             })}
           </ul>

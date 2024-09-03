@@ -50,7 +50,7 @@ const ChatLayout: React.FC = () => {
 
   useEffect(() => {
     const handleIncomingMessage = (message: { receiverUsername: string; senderUsername: string; }) => {
-      console.log("Message",message)
+      
       // Only dispatch the message if it's intended for the current user
       if (message?.receiverUsername === myInfo?.username || message?.senderUsername === myInfo?.username) {
         dispatch(adMessage(message));
@@ -108,7 +108,7 @@ const ChatLayout: React.FC = () => {
     user();
   }, [id, navigate]);
 
-  // console.log("messages", messages)
+  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const message = (e.target as HTMLFormElement).message.value;
@@ -126,6 +126,7 @@ const ChatLayout: React.FC = () => {
       });
 
       const result = await response.json();
+      console.log(result)
       if (response.status === 401 || response.status === 403) {
         localStorage.removeItem("token");
         return navigate("/login");
@@ -136,7 +137,7 @@ const ChatLayout: React.FC = () => {
       if (scrollRef.current) {
         scrollRef.current.scrollIntoView({ behavior: "smooth" });
       }
-      // console.log("chat result", result);
+      
     } catch (error) {
       console.log(error);
     }
@@ -148,7 +149,7 @@ const ChatLayout: React.FC = () => {
         {/* Main Chat Area */}
         <div className="flex-grow flex flex-col bg-gray-100 w-full">
           {/* Chat Header */}
-          <div className="p-4 bg-white shadow-md">
+          <div className="p-4 bg-white shadow-md flex gap-5 items-center">
             <h2 className="text-lg font-bold">Chat with {user?.name}</h2>
           </div>
 

@@ -19,11 +19,14 @@ const friendsSlice = createSlice({
             state.page += 1
         },
         replaceFriends: (state, action) => {
-            const updateFriends = action.payload as userTypeCheck
-            const index = state.friends.findIndex(friend => friend._id === updateFriends._id)
+            const updateFriends = action.payload as userTypeCheck[]
+            console.log(updateFriends[0])
+            const index = state.friends.findIndex(friend => friend._id === updateFriends[0]._id)
 
             if(index > -1){
-                state.friends[index] = updateFriends
+                // state.friends[index] = updateFriends
+                state.friends.splice(index, 1)
+                state.friends.unshift(updateFriends[0])
             }
         }
     },
@@ -33,10 +36,10 @@ const friendsSlice = createSlice({
             state.isLoading = true
         })
         .addCase(friends.fulfilled, (state, action) => {
-            // console.log("Payload: ", action.payload)
             state.isLoading = false
             state.error = ''
             const newFriends = action.payload as userTypeCheck[]
+            // console.log(newFriends)
             const existingFriend = new Set(state.friends.map(friend => friend._id))
             const uniqueNewFriends = newFriends.filter(friend =>!existingFriend.has(friend._id))
             state.friends = [...state.friends,...uniqueNewFriends]

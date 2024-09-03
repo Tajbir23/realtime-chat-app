@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
@@ -8,9 +9,6 @@ const Login: React.FC = () => {
 
   const handleLogin = async(e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    // console.log('Email:', email);
-    // console.log('Password:', password);
     try {
       const response = await fetch(`${import.meta.env.VITE_API}/api/login`, {
         method: 'POST',
@@ -22,13 +20,18 @@ const Login: React.FC = () => {
       
       const data = await response.json();
       
+      if(response.status === 401){
+        toast.error('Invalid email or password')
+        return
+      }
       if(data.token){
         // console.log(data.token)
         localStorage.setItem('token', data.token)
         navigate('/')
       }
     } catch (error) {
-      console.log(error)
+      toast.error((error as Error).message)
+      console.log((error as Error).message)
     }
 
   };

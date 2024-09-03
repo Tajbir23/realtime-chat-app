@@ -19,12 +19,15 @@ const allUsersSlice = createSlice({
             state.page += 1
         },
         replaceUser: (state, action) => {
-            const updateUser = action.payload as userTypeCheck
-            
-            const index = state.users.findIndex(user => user._id === updateUser._id)
+            const updateUser = action.payload as userTypeCheck[]
+            console.log("update user",updateUser[0])
+            const index = state.users.findIndex(user => user._id === updateUser[0]._id)
             if(index > -1){
-                state.users[index] = updateUser
+                state.users[index] = updateUser[0]
+                // delete state.users(index)
             }
+            // state.users.filter(user => user._id !== updateUser._id)
+            // state.users.unshift(updateUser)
         }
     },
     extraReducers: (builder) => {
@@ -41,7 +44,6 @@ const allUsersSlice = createSlice({
             const uniqueNewUser = newUser.filter(user =>!existingUser.has(user._id))
             state.users = [...state.users,...uniqueNewUser]
 
-            // console.log("all users", state.users)
             // state.page = action.payload.page
             // state.hasMore = action.payload.hasMore
             // state.totalUsers = action.payload.totalUsers

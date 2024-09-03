@@ -10,7 +10,6 @@ const allUsers = createAsyncThunk('allUsers/getAllUsers', async() => {
             },
         });
         const data = await response.json();
-        // console.log("users", data)
         return data;
     } catch (error) {
         console.log("error", error)
