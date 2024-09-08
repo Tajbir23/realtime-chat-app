@@ -93,7 +93,6 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
       }
       
       if(!response.ok){
-        console.log(data)
         setError(data.message)
         return;
       }

@@ -39,7 +39,6 @@ const friendsSlice = createSlice({
             state.isLoading = false
             state.error = ''
             const newFriends = action.payload as userTypeCheck[]
-            // console.log(newFriends)
             const existingFriend = new Set(state.friends.map(friend => friend._id))
             const uniqueNewFriends = newFriends.filter(friend =>!existingFriend.has(friend._id))
             state.friends = [...state.friends,...uniqueNewFriends]

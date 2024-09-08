@@ -20,7 +20,6 @@ const allUsersSlice = createSlice({
         },
         replaceUser: (state, action) => {
             const updateUser = action.payload as userTypeCheck[]
-            console.log("update user",updateUser[0])
             const index = state.users.findIndex(user => user._id === updateUser[0]._id)
             if(index > -1){
                 state.users[index] = updateUser[0]
@@ -43,7 +42,6 @@ const allUsersSlice = createSlice({
             const existingUser = new Set(state.users.map(user => user._id))
             const uniqueNewUser = newUser.filter(user =>!existingUser.has(user._id))
             state.users = [...state.users,...uniqueNewUser]
-
             // state.page = action.payload.page
             // state.hasMore = action.payload.hasMore
             // state.totalUsers = action.payload.totalUsers
