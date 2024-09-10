@@ -6,6 +6,7 @@ import { NavLink } from "react-router-dom";
 import friends from "../../../redux/typeCheck/friends";
 import { socket } from "../../../hooks/useSocket";
 import { replaceFriends } from "../../../redux/features/user/friendsSlice";
+import { toggle } from "../../../redux/features/toggle/toggleSlice";
 
 const Friends: React.FC = () => {
   const friends = useSelector(
@@ -18,6 +19,7 @@ const Friends: React.FC = () => {
       };
     }) => state.friends
   );
+  
   const dispatch = useDispatch<AppDispatch>();
 
   socket.on("recentMessage", (message) => {
@@ -58,6 +60,7 @@ const Friends: React.FC = () => {
         return (
           <>
             <NavLink
+              onClick={() => dispatch(toggle())}
               to={`/chat/${friend.receiverId?._id || friend.senderId?._id}`}
               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full"
             >

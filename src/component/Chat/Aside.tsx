@@ -68,13 +68,13 @@ const Aside = () => {
 
       <aside
         id="default-sidebar"
-        className={`fixed top-0 left-0 z-40 w-80 h-screen transition-transform ${
+        className={`fixed top-0 left-0 z-40 w-full h-screen overflow-hidden transition-transform sm:w-80 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } sm:translate-x-0`}
         aria-label="Sidebar"
       >
-        <div className="h-full px-3 py-4 bg-gray-50 dark:bg-gray-800 overflow-auto">
-          <div className="flex justify-between items-center border-b-2 border-black border-dotted p-5">
+        <div className="h-full px-3 bg-gray-50">
+          <div className="flex justify-between items-center p-2 fixed overflow-hidden bg-white z-50 w-full">
             <div className="flex items-center gap-4">
               <img
                 className="h-8 w-8 rounded-full border-blue-900 border-[4px]"
@@ -86,7 +86,7 @@ const Aside = () => {
                 <p>Active</p>
               </div>
             </div>
-            <div className="cursor-pointer inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" onClick={() => dispatch(toggle())}>
+            <div className="cursor-pointer inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 " onClick={() => dispatch(toggle())}>
               <span className="sr-only">Open sidebar</span>
               <svg
                 className="w-6 h-6"
@@ -103,16 +103,21 @@ const Aside = () => {
               </svg>
             </div>
           </div>
-          <ul className="space-y-2 font-medium my-5 pb-5 border-b-2 h-52 overflow-auto">
-            <li className="text-xl font-bold">Friends</li>
+          <div className="pt-14"></div>
+          <ul className="space-y-2 font-medium my-5 pb-5 border-b-2 min-h-10 max-h-72 overflow-x-auto px-3">
+            <li className="text-xl font-bold bg-gray-50 fixed w-full">Friends</li>
+            <li className="pt-5"></li>
             <Friends />
           </ul>
-          <ul className="space-y-2 font-medium mt-5">
+          <ul className="space-y-2 font-medium mt-5 overflow-x-auto h-full px-3">
+            <li className="text-xl font-bold fixed z-50 w-full bg-gray-50">Users</li>
+            <li className="pt-5"></li>
             {users?.map(chatUser => {
                 return <li className={`${chatUser.email === user.email ? "hidden" : "block"}`}>
                 <NavLink
+                  onClick={() => dispatch(toggle())}
                   to={`/chat/${chatUser._id}`}
-                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                  className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group"
                 >
                   <img
                     src={chatUser.photoUrl}
