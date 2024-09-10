@@ -20,11 +20,12 @@ const Friends: React.FC = () => {
   );
   const dispatch = useDispatch<AppDispatch>();
 
-  socket.on("lastMessage", (message) => {
+  socket.on("recentMessage", (message) => {
     friends.friends.map((friend) => {
+      console.log(message)
       if (
-        friend.receiverId?._id === message.senderId ||
-        friend.senderId?._id === message.senderId
+        friend.receiverId?._id === message.senderId?._id ||
+        friend.senderId?._id === message.senderId?.id
       ) {
         dispatch(replaceFriends(message));
       }
