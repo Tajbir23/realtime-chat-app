@@ -145,7 +145,7 @@ const ChatLayout: React.FC = () => {
 
   return (
     <div className="sm:ml-80 w-full">
-      <div className="h-screen flex w-full">
+      <div className="h-[calc(100vh-60px)] md:h-screen flex w-full">
         {/* Main Chat Area */}
         <div className="flex-grow flex flex-col bg-gray-100 w-full">
           {/* Chat Header */}
