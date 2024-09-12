@@ -20,10 +20,10 @@ const friendsSlice = createSlice({
         },
         replaceFriends: (state, action) => {
             const updateFriends = action.payload as userTypeCheck
-            // console.log(updateFriends)
             const index = state.friends.findIndex(friend => friend._id === updateFriends._id)
 
             if(index > -1){
+                console.log(index)
                 // state.friends[index] = updateFriends
                 state.friends.splice(index, 1)
                 state.friends.unshift(updateFriends)

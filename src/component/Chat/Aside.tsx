@@ -29,11 +29,14 @@ const Aside = () => {
 
   socket.on("users", (user: userTypeCheck[]) => {
     dispatch(replaceUser(user))
-    for(const friend of friends.friends){
-      if(friend._id === user[0]._id){
-        dispatch(replaceFriends(user))
-      }
-    }
+    dispatch(replaceFriends(user))
+    // console.log("friends", friends)
+    // for(const friend of friends.friends){
+    //   console.log("friend",user[0]._id)
+    //   if(friend._id === user[0]._id){
+    //     dispatch(replaceFriends(user))
+    //   }
+    // }
   });
 
   

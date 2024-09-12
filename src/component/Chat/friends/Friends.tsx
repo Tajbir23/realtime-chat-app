@@ -7,6 +7,7 @@ import friends from "../../../redux/typeCheck/friends";
 import { socket } from "../../../hooks/useSocket";
 import { replaceFriends } from "../../../redux/features/user/friendsSlice";
 import { toggle } from "../../../redux/features/toggle/toggleSlice";
+import userTypeCheck from "../../../redux/typeCheck/user";
 
 const Friends: React.FC = () => {
   const friends = useSelector(
@@ -19,19 +20,21 @@ const Friends: React.FC = () => {
       };
     }) => state.friends
   );
-  
+  const me = useSelector(
+    (state: { user: { user: userTypeCheck } }) => state.user.user
+  );
+
   const dispatch = useDispatch<AppDispatch>();
 
   socket.on("recentMessage", (message) => {
-    friends.friends.map((friend) => {
-      console.log(message)
-      if (
-        friend.receiverId?._id === message.senderId?._id ||
-        friend.senderId?._id === message.senderId?.id
-      ) {
-        dispatch(replaceFriends(message));
-      }
-    })
+    if(message[0].receiverId?._id === me?._id){
+      delete message[0].receiverId
+      dispatch(replaceFriends(message[0]))
+      
+    }else if(message[0].senderId?._id === me?._id){
+      delete message[0].senderId
+      dispatch(replaceFriends(message[0]))
+    }
   })
 
   useEffect(() => {
@@ -85,7 +88,7 @@ const Friends: React.FC = () => {
                 </div>
                 <div className="flex justify-between mx-3">
                   <p className="text-sm text-gray-500">
-                    {friend.lastMessage.split("").slice(0, 5)}...
+                    {friend.lastMessage?.split("").slice(0, 5)}...
                   </p>
                   <p className="text-sm text-gray-500">
                     {formatLastMessage(friend.lastMessageAt)}
