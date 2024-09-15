@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 import { socket } from "../../hooks/useSocket";
 import { replaceUser } from "../../redux/features/user/allUsersSlice";
 import allUsersState from "../../redux/typeCheck/allUserState";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import allUsers from "../../redux/thunks/allUserThunks";
 import { AppDispatch } from "../../redux/app/store";
 import Friends from "./friends/Friends";
@@ -20,7 +20,11 @@ const Aside = () => {
   const { users, page, hasMore, isLoading } = useSelector((state: { allUsers: allUsersState }) => state.allUsers);
   const isOpen = useSelector((state: ToggleStateCheck) => state.toggle.isOpen);
   const dispatch = useDispatch<AppDispatch>();
-  const userListRef = useRef<HTMLUListElement>(null)
+  const userListRef = useRef<HTMLUListElement>(null);
+  const [search, setSearch] = useState("");
+  const [searchUsers, setSearchUsers] = useState<userTypeCheck[]>([]);
+  const searchResultRef = useRef<HTMLUListElement>(null);
+  const [searchResultVisible, setSearchResultVisible] = useState(false)
 
   useEffect(() => {
     dispatch(allUsers(1))
@@ -58,6 +62,42 @@ const Aside = () => {
       }
     }
   },[handleScroll])
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API}/api/search/${search}?email=${user?.email}`,{
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      }
+    }).then((res) => res.json())
+    .then((data) => setSearchUsers(data))
+    .catch((err) => console.log(err))
+  },[search])
+
+useEffect(() => {
+  const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+    if(searchResultRef.current && !searchResultRef.current.contains(event.target as Node)){
+      setSearchResultVisible(false)
+    }
+  }
+
+  document.addEventListener('mousedown', handleClickOutside)
+  document.addEventListener('touchstart', handleClickOutside)
+
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside)
+    document.removeEventListener('touchstart', handleClickOutside)
+  }
+},[searchResultRef])
+
+
+  useEffect(() => {
+    if(search && searchUsers.length > 0){
+      setSearchResultVisible(true)
+    }else{
+      setSearchResultVisible(false)
+    }
+  },[search, searchUsers])
 
   return (
     <>
@@ -125,10 +165,28 @@ const Aside = () => {
               </svg>
             </div>
           </div>
-          <div className="pt-14"></div>
-          <ul className="space-y-2 font-medium my-5 pb-5 border-b-2 min-h-10 max-h-72 overflow-y-auto px-3">
+          <div className="mt-20">
+            <input onChange={(e) => setSearch(e.target.value)} className="border w-full" type="search" placeholder="Search here" />
+          </div>
+
+          {/* here search result */}
+          {searchResultVisible && <ul ref={searchResultRef} className="absolute top-32 z-50 bg-white shadow-2xl p-5">
+            {searchUsers?.map(user => (
+              <li key={user._id}>
+                <NavLink to={`/chat/${user._id}`} onClick={() => dispatch(toggle())} className="cursor-pointer flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group" >
+                <img
+                  src={user.photoUrl}
+                  className="h-8 w-8 rounded-full"
+                  alt="image not found"
+                />
+                <span className="ms-3">{user.name}</span>
+              </NavLink>
+              </li>
+            ))}
+          </ul>}
+
+          <ul className="space-y-2 z-0 font-medium my-5 pb-5 border-b-2 min-h-10 max-h-72 overflow-y-auto px-3">
             <li className="text-xl font-bold bg-gray-50">Friends</li>
-            <li className="pt-5"></li>
             <Friends />
           </ul>
           <ul ref={userListRef} className="space-y-2 font-medium mt-5 overflow-y-auto flex-grow px-3">
@@ -147,8 +205,8 @@ const Aside = () => {
                       className="h-8 w-8 rounded-full"
                       alt="image not found"
                     />
-                    <span className="ms-3">{chatUser.name}</span>
-                    <p className="ms-4 text-sm">
+                    <span className="ms-3 mr-auto">{chatUser.name}</span>
+                    <p className="ms-4 text-sm ">
                       {chatUser.isActive ? (
                         <div className="h-2 w-2 rounded-full bg-blue-700"></div>
                       ) : (

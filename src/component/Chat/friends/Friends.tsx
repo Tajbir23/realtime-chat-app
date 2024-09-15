@@ -81,10 +81,10 @@ const Friends: React.FC = () => {
               />
               <div className="w-full">
                 <div className="flex items-center">
-                  <span className="ms-3">
+                  <span className="ms-3 mr-auto">
                     {friend.receiverId?.name || friend.senderId?.name}
                   </span>
-                  <p className="ms-4 text-sm ml-auto">
+                  <p className="ms-4 text-sm">
                     {friend.receiverId?.isActive ||
                     friend.senderId?.isActive ? (
                       <div className="h-2 w-2 rounded-full bg-blue-700"></div>
