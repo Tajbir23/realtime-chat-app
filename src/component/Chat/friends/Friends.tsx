@@ -5,7 +5,7 @@ import friendsThunk from "../../../redux/thunks/friendsThunks";
 import { NavLink } from "react-router-dom";
 import friends from "../../../redux/typeCheck/friends";
 import { socket } from "../../../hooks/useSocket";
-import { replaceFriends } from "../../../redux/features/user/friendsSlice";
+import { replaceFriends, updateFriendActiveStatus } from "../../../redux/features/user/friendsSlice";
 import { toggle } from "../../../redux/features/toggle/toggleSlice";
 import userTypeCheck from "../../../redux/typeCheck/user";
 
@@ -26,7 +26,14 @@ const Friends: React.FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
+  socket.on("updateFriendStatus", (friend) => {
+    
+    dispatch(updateFriendActiveStatus(friend))
+    
+  })
+
   socket.on("recentMessage", (message) => {
+    
     if(message[0].receiverId?._id === me?._id){
       delete message[0].receiverId
       dispatch(replaceFriends(message[0]))

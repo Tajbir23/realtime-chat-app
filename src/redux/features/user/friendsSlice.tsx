@@ -28,6 +28,17 @@ const friendsSlice = createSlice({
                 state.friends.splice(index, 1)
                 state.friends.unshift(updateFriends)
             }
+        },
+        updateFriendActiveStatus: (state, action) => {
+            const updateFriend = action.payload as userTypeCheck
+            const index = state.friends.findIndex(friend => friend._id === updateFriend._id)
+
+            console.log("update status",updateFriend)
+            console.log("index",index)
+
+            if(index > -1){
+                state.friends[index] = updateFriend
+            }
         }
     },
     extraReducers: (builder) => {
@@ -50,6 +61,6 @@ const friendsSlice = createSlice({
     }
 })
 
-export const { incrementPage, replaceFriends } = friendsSlice.actions;
+export const { incrementPage, replaceFriends, updateFriendActiveStatus } = friendsSlice.actions;
 
 export default friendsSlice.reducer;
