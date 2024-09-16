@@ -66,7 +66,7 @@ const Friends: React.FC = () => {
   };
   return (
     <>
-      {friends.friends.map((friend) => {
+      {friends.friends.length > 0 && friends.friends.map((friend) => {
         return (
           <>
             <NavLink

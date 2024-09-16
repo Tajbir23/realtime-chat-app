@@ -189,9 +189,8 @@ useEffect(() => {
             <li className="text-xl font-bold bg-gray-50">Friends</li>
             <Friends />
           </ul>
-          <ul ref={userListRef} className="space-y-2 font-medium mt-5 overflow-y-auto flex-grow px-3">
+          <ul ref={userListRef} className="space-y-2 font-medium overflow-y-auto flex-grow px-3">
             <li className="text-xl font-bold bg-gray-50">Users</li>
-            <li className="pt-5"></li>
             {users?.map(chatUser => {
               return (
                 <li key={chatUser._id} className={`${chatUser.email === user.email ? "hidden" : "block"}`}>
