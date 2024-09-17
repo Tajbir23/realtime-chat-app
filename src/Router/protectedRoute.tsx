@@ -11,6 +11,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     
     const dispatch = useDispatch<AppDispatch>()
     const userData = useSelector((state: { user: { isLoading: boolean; user: { error: string; email: string }, error: string; } }) => state.user)
+    console.log(userData)
     const token = localStorage.getItem('token')
     
     useEffect(() => {
@@ -24,7 +25,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
       </div>
     }
 
-    socket.emit('connected', userData.user?.email)
+    socket.emit('connected', userData.user)
     
     if(userData?.user?.error === "read ECONNRESET" || !token){
       localStorage.removeItem('token')

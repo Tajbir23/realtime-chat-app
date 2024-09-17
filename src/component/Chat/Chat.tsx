@@ -7,6 +7,7 @@ import MessageState from "../../redux/typeCheck/messageState";
 import { adMessage, incrementPage } from "../../redux/features/message/messageSlice";
 import messageThunk from "../../redux/thunks/messageThunks";
 import { socket } from "../../hooks/useSocket";
+import upcomingMessageType from "../../redux/typeCheck/upcomingMessageType";
 
 const ChatLayout: React.FC = () => {
   const { id } = useParams();
@@ -22,6 +23,9 @@ const ChatLayout: React.FC = () => {
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevScrollHeightRef = useRef<number>(0);
+  const trackKeyRef = useRef<HTMLInputElement>(null);
+  const [upcomingMessage, setUpcomingMessage] = useState<upcomingMessageType>();
+  const [countDown, setCountDown] = useState(4)
 
   const loadMoreMessages = useCallback(() => {
     if (hasMore && !isLoading) {
@@ -50,7 +54,7 @@ const ChatLayout: React.FC = () => {
 
   useEffect(() => {
     const handleIncomingMessage = (message: { receiverUsername: string; senderUsername: string; }) => {
-      
+      setCountDown(0)
       // Only dispatch the message if it's intended for the current user
       if (message?.receiverUsername === myInfo?.username || message?.senderUsername === myInfo?.username) {
         dispatch(adMessage(message));
@@ -143,6 +147,70 @@ const ChatLayout: React.FC = () => {
     }
   };
 
+  /* track message key and send as upcoming message */  
+
+  useEffect(() => {
+    const element = trackKeyRef.current
+    if(element){
+      const handleKeyDown = (e: KeyboardEvent) =>{
+        const inputElement = e.target as HTMLInputElement
+
+        socket.emit('sendUpcomingMessage', {
+          message: inputElement.value,
+          receiverId: id,
+          senderEmail:myInfo.email,
+          senderId: myInfo._id,
+          upcoming: true
+        })
+      }
+
+      const handleKeyUp = (event: KeyboardEvent) => {
+        const inputElement = event.target as HTMLInputElement
+          socket.emit('sendUpcomingMessage', {
+            message: inputElement.value,
+            receiverId: id,
+            senderEmail:myInfo.email,
+            senderId: myInfo._id,
+            upcoming: false
+          })
+      }
+
+
+      element.addEventListener('keydown', handleKeyDown)
+      element.addEventListener('keyup', handleKeyUp)
+      return () => {
+        element.removeEventListener('keydown', handleKeyDown)
+        element.removeEventListener('keyup', handleKeyUp)
+      }
+
+
+    }
+  },[id])
+
+
+  socket.on('upcomingMessage', (message) => {
+    if(message?.receiverId){
+      setUpcomingMessage(message)
+    }
+  })
+
+  useEffect(() => {
+    if(upcomingMessage && !upcomingMessage.upcoming){
+      setCountDown(4)
+      const interval = setInterval(() => {
+        setCountDown((prevCount) => {
+          if(prevCount <= 1){
+            clearInterval(interval)
+            return 0
+          }
+          return prevCount - 1
+        })
+      }, 1000)
+
+    }
+  },[upcomingMessage])
+
+  console.log(countDown)
   return (
     <div className="sm:ml-80 w-full">
       <div className="h-[calc(100vh-60px)] sm:h-screen flex w-full">
@@ -169,10 +237,13 @@ const ChatLayout: React.FC = () => {
             ))}
             <div ref={scrollRef} />
           </div>
-
+          {upcomingMessage && countDown !== 0 && <div className="justify-start mt-auto m-5 block bg-white p-5">
+              <div className=" rounded-lg w-full  text-gray-900">upcoming: {upcomingMessage?.message}</div>
+            </div>}
           {/* Input Area */}
           <form onSubmit={handleSubmit} className="p-4 bg-white flex w-full">
             <input
+              ref={trackKeyRef}
               type="text"
               className="flex-grow p-2 border rounded-md mr-2"
               placeholder="Type a message"
