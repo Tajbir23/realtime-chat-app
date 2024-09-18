@@ -46,7 +46,7 @@ const Aside = () => {
     if(element){
       if(element.scrollHeight - element.scrollTop <= element.clientHeight + 1){
         if(hasMore && !isLoading){
-          console.log("scroll")
+          
           dispatch(allUsers(page + 1))
         }
       }

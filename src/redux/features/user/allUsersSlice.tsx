@@ -21,15 +21,10 @@ const allUsersSlice = createSlice({
         replaceUser: (state, action) => {
             const updateUser = action.payload as userTypeCheck[]
             const index = state.users.findIndex(user => user._id === updateUser[0]._id)
-
-            // console.log("update user",updateUser)
             
             if(index > -1){
                 state.users[index] = updateUser[0]
-                // delete state.users(index)
             }
-            // state.users.filter(user => user._id !== updateUser._id)
-            // state.users.unshift(updateUser)
         }
     },
     extraReducers: (builder) => {

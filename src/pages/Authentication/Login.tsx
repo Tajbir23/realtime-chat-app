@@ -25,7 +25,7 @@ const Login: React.FC = () => {
         return
       }
       if(data.token){
-        // console.log(data.token)
+        
         localStorage.setItem('token', data.token)
         navigate('/')
       }

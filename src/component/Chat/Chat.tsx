@@ -210,7 +210,7 @@ const ChatLayout: React.FC = () => {
     }
   },[upcomingMessage])
 
-  console.log(countDown)
+  
   return (
     <div className="sm:ml-80 w-full">
       <div className="h-[calc(100vh-60px)] sm:h-screen flex w-full">
