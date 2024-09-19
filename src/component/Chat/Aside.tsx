@@ -21,6 +21,7 @@ const Aside = () => {
   const isOpen = useSelector((state: ToggleStateCheck) => state.toggle.isOpen);
   const dispatch = useDispatch<AppDispatch>();
   const userListRef = useRef<HTMLUListElement>(null);
+  const friendListRef = useRef<HTMLUListElement>(null);
   const [search, setSearch] = useState("");
   const [searchUsers, setSearchUsers] = useState<userTypeCheck[]>([]);
   const searchResultRef = useRef<HTMLUListElement>(null);
@@ -40,7 +41,7 @@ const Aside = () => {
     }
   }, [dispatch]);
 
-  const handleScroll = useCallback(() => {
+  const handleUserScroll = useCallback(() => {
     const element = userListRef.current
     
     if(element){
@@ -56,12 +57,12 @@ const Aside = () => {
   useEffect(() => {
     const element = userListRef.current
     if(element){
-      element.addEventListener('scroll', handleScroll)
+      element.addEventListener('scroll', handleUserScroll)
       return () => {
-        element.removeEventListener('scroll', handleScroll)
+        element.removeEventListener('scroll', handleUserScroll)
       }
     }
-  },[handleScroll])
+  },[handleUserScroll])
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API}/api/search/${search}?email=${user?.email}`,{
@@ -185,7 +186,7 @@ useEffect(() => {
             ))}
           </ul>}
 
-          <ul className="space-y-2 z-0 font-medium my-5 pb-5 border-b-2 min-h-10 max-h-72 overflow-y-auto px-3">
+          <ul ref={friendListRef} className="space-y-2 z-0 font-medium my-5 pb-5 border-b-2 min-h-10 max-h-72 overflow-y-auto px-3">
             <li className="text-xl font-bold bg-gray-50">Friends</li>
             <Friends />
           </ul>

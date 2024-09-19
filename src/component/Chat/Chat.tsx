@@ -4,7 +4,10 @@ import userTypeCheck from "../../redux/typeCheck/user";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../redux/app/store";
 import MessageState from "../../redux/typeCheck/messageState";
-import { adMessage, incrementPage } from "../../redux/features/message/messageSlice";
+import {
+  adMessage,
+  incrementPage,
+} from "../../redux/features/message/messageSlice";
 import messageThunk from "../../redux/thunks/messageThunks";
 import { socket } from "../../hooks/useSocket";
 import upcomingMessageType from "../../redux/typeCheck/upcomingMessageType";
@@ -16,23 +19,26 @@ const ChatLayout: React.FC = () => {
   const { messages, page, hasMore, isLoading } = useSelector(
     (state: { message: MessageState }) => state.message
   );
-  const reverseMessage = [...messages].reverse()
-  const myInfo = useSelector((state: { user: { user: userTypeCheck } }) => state.user.user);
+
+  const reverseMessage = [...messages].reverse();
+  const myInfo = useSelector(
+    (state: { user: { user: userTypeCheck } }) => state.user.user
+  );
   const navigate = useNavigate();
-  
+
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevScrollHeightRef = useRef<number>(0);
   const trackKeyRef = useRef<HTMLInputElement>(null);
   const [upcomingMessage, setUpcomingMessage] = useState<upcomingMessageType>();
-  const [countDown, setCountDown] = useState(4)
+  const [countDown, setCountDown] = useState(4);
 
   const loadMoreMessages = useCallback(() => {
-    if (hasMore && !isLoading) {
+    if (hasMore && !isLoading && id) {
       prevScrollHeightRef.current = chatBoxRef.current?.scrollHeight || 0;
-      dispatch(incrementPage());
+      dispatch(incrementPage({ id }));
     }
-  }, [dispatch, hasMore, isLoading]);
+  }, [dispatch, hasMore, isLoading, id]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,17 +59,21 @@ const ChatLayout: React.FC = () => {
   }, [loadMoreMessages]);
 
   useEffect(() => {
-    const handleIncomingMessage = (message: { receiverUsername: string; senderUsername: string; }) => {
-      setCountDown(0)
+    const handleIncomingMessage = (message: {
+      receiverUsername: string;
+      senderUsername: string;
+    }) => {
+      setCountDown(0);
       // Only dispatch the message if it's intended for the current user
-      if (message?.receiverUsername === myInfo?.username || message?.senderUsername === myInfo?.username) {
+      if (
+        message?.receiverUsername === myInfo?.username ||
+        message?.senderUsername === myInfo?.username
+      ) {
         dispatch(adMessage(message));
       }
     };
 
     socket.on("message", handleIncomingMessage);
-
-    
   }, [dispatch, myInfo?.username]);
 
   useEffect(() => {
@@ -75,25 +85,34 @@ const ChatLayout: React.FC = () => {
     }
   }, [messages, page]);
 
+
+  // console.log("page", typeof page === 'object' && id && id in page ? page[id as keyof typeof page] : 1);
+  console.log("page", page)
+
   useEffect(() => {
-    const data: { currentPage: number; id: string } = {
-      currentPage: page,
-      id: id || "",
-    };
-    dispatch(messageThunk(data));
+    if (id) {
+      const data: { currentPage: number; id: string } = {
+        currentPage: typeof page === 'object' && id in page ? page[id as keyof typeof page] : 1,
+        id: id || "",
+      };
+      dispatch(messageThunk(data));
+    }
   }, [dispatch, id, page]);
 
   useEffect(() => {
     const user = async () => {
       const token = localStorage.getItem("token");
       try {
-        const response = await fetch(`${import.meta.env.VITE_API}/api/user/${id}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_API}/api/user/${id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         const data = await response.json();
         setUser(data);
@@ -112,7 +131,6 @@ const ChatLayout: React.FC = () => {
     user();
   }, [id, navigate]);
 
-  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const message = (e.target as HTMLFormElement).message.value;
@@ -130,87 +148,82 @@ const ChatLayout: React.FC = () => {
       });
 
       const result = await response.json();
-      console.log(result)
+      console.log(result);
       if (response.status === 401 || response.status === 403) {
         localStorage.removeItem("token");
         return navigate("/login");
       }
       (e.target as HTMLFormElement).message.value = "";
-      prevScrollHeightRef.current = 0
-      
+      prevScrollHeightRef.current = 0;
+
       if (scrollRef.current) {
         scrollRef.current.scrollIntoView({ behavior: "smooth" });
       }
-      
     } catch (error) {
       console.log(error);
     }
   };
 
-  /* track message key and send as upcoming message */  
+  /* track message key and send as upcoming message */
 
   useEffect(() => {
-    const element = trackKeyRef.current
-    if(element){
-      const handleKeyDown = (e: KeyboardEvent) =>{
-        const inputElement = e.target as HTMLInputElement
+    const element = trackKeyRef.current;
+    if (element) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        const inputElement = e.target as HTMLInputElement;
 
-        socket.emit('sendUpcomingMessage', {
+        socket.emit("sendUpcomingMessage", {
           message: inputElement.value,
           receiverId: id,
-          senderEmail:myInfo.email,
+          senderEmail: myInfo.email,
           senderId: myInfo._id,
-          upcoming: true
-        })
-      }
+          upcoming: true,
+        });
+      };
 
       const handleKeyUp = (event: KeyboardEvent) => {
-        const inputElement = event.target as HTMLInputElement
-          socket.emit('sendUpcomingMessage', {
-            message: inputElement.value,
-            receiverId: id,
-            senderEmail:myInfo.email,
-            senderId: myInfo._id,
-            upcoming: false
-          })
-      }
+        const inputElement = event.target as HTMLInputElement;
+        socket.emit("sendUpcomingMessage", {
+          message: inputElement.value,
+          receiverId: id,
+          senderEmail: myInfo.email,
+          senderId: myInfo._id,
+          upcoming: false,
+        });
+      };
 
-
-      element.addEventListener('keydown', handleKeyDown)
-      element.addEventListener('keyup', handleKeyUp)
+      element.addEventListener("keydown", handleKeyDown);
+      element.addEventListener("keyup", handleKeyUp);
       return () => {
-        element.removeEventListener('keydown', handleKeyDown)
-        element.removeEventListener('keyup', handleKeyUp)
-      }
-
-
+        element.removeEventListener("keydown", handleKeyDown);
+        element.removeEventListener("keyup", handleKeyUp);
+      };
     }
-  },[id])
+  }, [id]);
 
-
-  socket.on('upcomingMessage', (message) => {
-    if(message?.receiverId){
-      setUpcomingMessage(message)
+  socket.on("upcomingMessage", (message) => {
+    if (message?.receiverId) {
+      setUpcomingMessage(message);
     }
-  })
+  });
 
   useEffect(() => {
-    if(upcomingMessage && !upcomingMessage.upcoming){
-      setCountDown(4)
+    if (upcomingMessage && !upcomingMessage.upcoming) {
+      setCountDown(4);
       const interval = setInterval(() => {
         setCountDown((prevCount) => {
-          if(prevCount <= 1){
-            clearInterval(interval)
-            return 0
+          if (prevCount <= 1) {
+            clearInterval(interval);
+            return 0;
           }
-          return prevCount - 1
-        })
-      }, 1000)
-
+          return prevCount - 1;
+        });
+      }, 1000);
     }
-  },[upcomingMessage])
+  }, [upcomingMessage]);
 
-  
+  console.log(reverseMessage);
+
   return (
     <div className="sm:ml-80 w-full">
       <div className="h-[calc(100vh-60px)] sm:h-screen flex w-full">
@@ -221,15 +234,35 @@ const ChatLayout: React.FC = () => {
             <h2 className="text-lg font-bold">Chat with {user?.name}</h2>
           </div>
 
+          {isLoading && (
+            <h1 className="text-4xl font-bold text-center">Loading</h1>
+          )}
+
           {/* Chat Messages */}
-          <div ref={chatBoxRef} className="flex-grow p-4 overflow-y-auto w-full">
+          <div
+            ref={chatBoxRef}
+            className="flex-grow p-4 overflow-y-auto w-full"
+          >
             {reverseMessage.map((msg, index) => (
               <div
                 key={index}
-                className={`mb-4 flex ${msg.receiverUsername === user?.username || msg.senderUsername === user?.username ? 'block' : 'hidden'} ${msg.senderUsername === myInfo.username ? 'justify-end' : 'justify-start'}`}
+                className={`mb-4 flex ${
+                  msg.receiverUsername === user?.username ||
+                  msg.senderUsername === user?.username
+                    ? "block"
+                    : "hidden"
+                } ${
+                  msg.senderUsername === myInfo.username
+                    ? "justify-end"
+                    : "justify-start"
+                }`}
               >
                 <div
-                  className={`p-3 rounded-lg max-w-xs ${msg.senderUsername === myInfo.username ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-900'}`}
+                  className={`p-3 rounded-lg max-w-xs ${
+                    msg.senderUsername === myInfo.username
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-300 text-gray-900"
+                  }`}
                 >
                   {msg.message}
                 </div>
@@ -237,9 +270,13 @@ const ChatLayout: React.FC = () => {
             ))}
             <div ref={scrollRef} />
           </div>
-          {upcomingMessage && countDown !== 0 && <div className="justify-start mt-auto m-5 block bg-white p-5">
-              <div className=" rounded-lg w-full  text-gray-900">upcoming: {upcomingMessage?.message}</div>
-            </div>}
+          {upcomingMessage && countDown !== 0 && (
+            <div className="justify-start mt-auto m-5 block bg-white p-5">
+              <div className=" rounded-lg w-full  text-gray-900">
+                upcoming: {upcomingMessage?.message}
+              </div>
+            </div>
+          )}
           {/* Input Area */}
           <form onSubmit={handleSubmit} className="p-4 bg-white flex w-full">
             <input
@@ -263,5 +300,4 @@ const ChatLayout: React.FC = () => {
     </div>
   );
 };
-
 export default ChatLayout;
