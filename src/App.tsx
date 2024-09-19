@@ -1,6 +1,5 @@
 import Chat from "./layout/Chat"
 
-
 function App() {
 
   return (

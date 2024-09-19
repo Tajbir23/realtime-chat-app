@@ -100,7 +100,7 @@ useEffect(() => {
   },[search, searchUsers])
 
   return (
-    <>
+    <div data-aos="fade-right">
       <button
         onClick={() => dispatch(toggle())}
         data-drawer-target="default-sidebar"
@@ -217,7 +217,7 @@ useEffect(() => {
           </ul>
         </div>
       </aside>
-    </>
+    </div>
   );
 };
 

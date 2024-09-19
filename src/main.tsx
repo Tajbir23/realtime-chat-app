@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
+    
     <Toaster position="top-center" reverseOrder={false} />
     <Provider store={Store}>
     <RouterProvider router={router} />

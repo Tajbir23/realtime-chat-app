@@ -222,7 +222,7 @@ const ChatLayout: React.FC = () => {
     }
   }, [upcomingMessage]);
 
-  console.log(reverseMessage);
+  console.log("user",user);
 
   return (
     <div className="sm:ml-80 w-full">
@@ -230,7 +230,7 @@ const ChatLayout: React.FC = () => {
         {/* Main Chat Area */}
         <div className="flex-grow flex flex-col bg-gray-100 w-full">
           {/* Chat Header */}
-          <div className="p-4 bg-white shadow-md flex gap-5 items-center">
+          <div data-aos="fade-down" className="p-4 bg-white shadow-md flex gap-5 items-center">
             <h2 className="text-lg font-bold">Chat with {user?.name}</h2>
           </div>
 
