@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../../redux/app/store";
 import friendsThunk from "../../../redux/thunks/friendsThunks";
@@ -24,6 +24,8 @@ const Friends: React.FC = () => {
     (state: { user: { user: userTypeCheck } }) => state.user.user
   );
 
+  const friendListRef = useRef<HTMLUListElement>(null)
+
   const dispatch = useDispatch<AppDispatch>();
 
   socket.on("updateFriendStatus", (friend) => {
@@ -48,6 +50,30 @@ const Friends: React.FC = () => {
     dispatch(friendsThunk(friends.page));
   }, [dispatch, friends.page]);
 
+
+  // start scroll logic
+  const handleFriendScroll = useCallback(() => {
+    const element = friendListRef.current
+    if(element){
+      if(element.scrollHeight - element.scrollTop <= element.clientHeight + 1){
+        if(friends.hasMore && !friends.isLoading){
+          dispatch(friendsThunk(friends.page + 1))
+        }
+      }
+    }
+  },[dispatch, friends])
+
+  useEffect(() => {
+    const element = friendListRef.current
+    if(element){
+      element.addEventListener('scroll', handleFriendScroll)
+      return () => {
+        element.removeEventListener('scroll', handleFriendScroll)
+      }
+    }
+  }, [handleFriendScroll])
+  // end scroll logic
+
   const formatLastMessage = (lastMessageAt: number): string => {
     const now = Date.now();
     const timeDifference = now - lastMessageAt;
@@ -65,10 +91,12 @@ const Friends: React.FC = () => {
     return new Date(lastMessageAt).toLocaleDateString(); // fallback to full date
   };
   return (
-    <>
+    <ul ref={friendListRef} className="space-y-2 z-0 font-medium my-5 pb-5 border-b-2 min-h-10 max-h-72 overflow-y-auto px-3">
+      <li className="text-xl font-bold bg-gray-50">Friends</li>
       {friends.friends.length > 0 && friends.friends.map((friend) => {
         return (
           <>
+            <li>
             <NavLink
               onClick={() => dispatch(toggle())}
               to={`/chat/${friend.receiverId?._id || friend.senderId?._id}`}
@@ -103,10 +131,11 @@ const Friends: React.FC = () => {
                 </div>
               </div>
             </NavLink>
+            </li>
           </>
         );
       })}
-    </>
+    </ul>
   );
 };
 

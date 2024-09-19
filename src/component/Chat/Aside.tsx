@@ -21,7 +21,6 @@ const Aside = () => {
   const isOpen = useSelector((state: ToggleStateCheck) => state.toggle.isOpen);
   const dispatch = useDispatch<AppDispatch>();
   const userListRef = useRef<HTMLUListElement>(null);
-  const friendListRef = useRef<HTMLUListElement>(null);
   const [search, setSearch] = useState("");
   const [searchUsers, setSearchUsers] = useState<userTypeCheck[]>([]);
   const searchResultRef = useRef<HTMLUListElement>(null);
@@ -186,10 +185,8 @@ useEffect(() => {
             ))}
           </ul>}
 
-          <ul ref={friendListRef} className="space-y-2 z-0 font-medium my-5 pb-5 border-b-2 min-h-10 max-h-72 overflow-y-auto px-3">
-            <li className="text-xl font-bold bg-gray-50">Friends</li>
             <Friends />
-          </ul>
+
           <ul ref={userListRef} className="space-y-2 font-medium overflow-y-auto flex-grow px-3">
             <li className="text-xl font-bold bg-gray-50">Users</li>
             {users?.map(chatUser => {
