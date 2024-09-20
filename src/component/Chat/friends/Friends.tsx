@@ -88,7 +88,7 @@ const Friends: React.FC = () => {
     if (seconds < 60) return rtf.format(-seconds, 'second');
     if (minutes < 60) return rtf.format(-minutes, 'minute');
     if (hours < 24) return rtf.format(-hours, 'hour');
-    return new Date(lastMessageAt).toLocaleDateString(); // fallback to full date
+    return new Date(lastMessageAt).toLocaleDateString(); 
   };
   return (
     <ul ref={friendListRef} className="space-y-2 z-0 font-medium my-5 pb-5 border-b-2 min-h-10 max-h-72 overflow-y-auto px-3">

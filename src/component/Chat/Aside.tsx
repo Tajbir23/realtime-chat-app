@@ -4,12 +4,13 @@ import userTypeCheck from "../../redux/typeCheck/user";
 import ToggleStateCheck from "../../redux/typeCheck/toggle";
 import { NavLink } from "react-router-dom";
 import { socket } from "../../hooks/useSocket";
-import { replaceUser } from "../../redux/features/user/allUsersSlice";
+import { incrementPage, replaceUser } from "../../redux/features/user/allUsersSlice";
 import allUsersState from "../../redux/typeCheck/allUserState";
 import { useCallback, useEffect, useRef, useState } from "react";
 import allUsers from "../../redux/thunks/allUserThunks";
 import { AppDispatch } from "../../redux/app/store";
 import Friends from "./friends/Friends";
+
 
 // const socket = io(`${import.meta.env.VITE_API}`);
 
@@ -31,7 +32,7 @@ const Aside = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    socket.on("users", (user: userTypeCheck[]) => {
+    socket.on("users", (user: userTypeCheck) => {
       dispatch(replaceUser(user))
     });
 
@@ -39,7 +40,7 @@ const Aside = () => {
       socket.off("users");
     }
   }, [dispatch]);
-
+  console.log("users", users)
   const handleUserScroll = useCallback(() => {
     const element = userListRef.current
     
@@ -47,12 +48,14 @@ const Aside = () => {
       if(element.scrollHeight - element.scrollTop <= element.clientHeight + 1){
         if(hasMore && !isLoading){
           
-          dispatch(allUsers(page + 1))
+          dispatch(incrementPage())
+          dispatch(allUsers(page))
         }
       }
     }
-  },[hasMore, isLoading, page, dispatch])
+  },[hasMore, isLoading, dispatch, page])
 
+  console.log("page", page)
   useEffect(() => {
     const element = userListRef.current
     if(element){

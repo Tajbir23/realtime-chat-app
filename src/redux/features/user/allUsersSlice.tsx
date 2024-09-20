@@ -19,11 +19,11 @@ const allUsersSlice = createSlice({
             state.page += 1
         },
         replaceUser: (state, action) => {
-            const updateUser = action.payload as userTypeCheck[]
-            const index = state.users.findIndex(user => user._id === updateUser[0]._id)
+            const updateUser = action.payload as userTypeCheck
+            const index = state.users.findIndex(user => user._id === updateUser._id)
             
             if(index > -1){
-                state.users[index] = updateUser[0]
+                state.users[index] = updateUser
             }
         }
     },
@@ -51,6 +51,6 @@ const allUsersSlice = createSlice({
     }
 })
 
-export const { replaceUser } = allUsersSlice.actions;
+export const { replaceUser, incrementPage } = allUsersSlice.actions;
 
 export default allUsersSlice.reducer;

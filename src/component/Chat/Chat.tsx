@@ -11,6 +11,7 @@ import {
 import messageThunk from "../../redux/thunks/messageThunks";
 import { socket } from "../../hooks/useSocket";
 import upcomingMessageType from "../../redux/typeCheck/upcomingMessageType";
+import BlockButton from "./BlockButton";
 
 const ChatLayout: React.FC = () => {
   const { id } = useParams();
@@ -222,7 +223,6 @@ const ChatLayout: React.FC = () => {
     }
   }, [upcomingMessage]);
 
-  console.log("user",user);
 
   return (
     <div className="sm:ml-80 w-full">
@@ -230,8 +230,9 @@ const ChatLayout: React.FC = () => {
         {/* Main Chat Area */}
         <div className="flex-grow flex flex-col bg-gray-100 w-full">
           {/* Chat Header */}
-          <div data-aos="fade-down" className="p-4 bg-white shadow-md flex gap-5 items-center">
+          <div data-aos="fade-down" className="p-4 bg-white shadow-md flex gap-5 items-center justify-between">
             <h2 className="text-lg font-bold">Chat with {user?.name}</h2>
+            <BlockButton id={id ?? "default-id"} myInfo={myInfo} />
           </div>
 
           {isLoading && (
