@@ -190,7 +190,7 @@ useEffect(() => {
 
             <Friends />
 
-          <ul ref={userListRef} className="space-y-2 font-medium overflow-y-auto flex-grow px-3">
+          <ul ref={userListRef} className="space-y-2 font-medium overflow-y-auto flex-grow px-3 h-1/2">
             <li className="text-xl font-bold bg-gray-50">Users</li>
             {users?.map(chatUser => {
               return (
