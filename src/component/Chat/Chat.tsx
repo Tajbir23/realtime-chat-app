@@ -12,6 +12,8 @@ import messageThunk from "../../redux/thunks/messageThunks";
 import { socket } from "../../hooks/useSocket";
 import upcomingMessageType from "../../redux/typeCheck/upcomingMessageType";
 import BlockButton from "./BlockButton";
+import friends from "../../redux/typeCheck/friends";
+import SubmitMessage from "./SubmitMessage";
 
 const ChatLayout: React.FC = () => {
   const { id } = useParams();
@@ -19,6 +21,17 @@ const ChatLayout: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { messages, page, hasMore, isLoading } = useSelector(
     (state: { message: MessageState }) => state.message
+  );
+
+  const friends = useSelector(
+    (state: {
+      friends: {
+        friends: friends[];
+        hasMore: boolean;
+        isLoading: boolean;
+        page: number;
+      };
+    }) => state.friends
   );
 
   const reverseMessage = [...messages].reverse();
@@ -87,8 +100,6 @@ const ChatLayout: React.FC = () => {
   }, [messages, page]);
 
 
-  // console.log("page", typeof page === 'object' && id && id in page ? page[id as keyof typeof page] : 1);
-  console.log("page", page)
 
   useEffect(() => {
     if (id) {
@@ -224,6 +235,8 @@ const ChatLayout: React.FC = () => {
   }, [upcomingMessage]);
 
 
+  const friend = friends.friends.find((f) => f.senderId?._id === id || f.receiverId?._id === id)
+
   return (
     <div className="sm:ml-80 w-full">
       <div className="h-[calc(100vh-60px)] sm:h-screen flex w-full">
@@ -279,23 +292,10 @@ const ChatLayout: React.FC = () => {
             </div>
           )}
           {/* Input Area */}
-          <form onSubmit={handleSubmit} className="p-4 bg-white flex w-full">
-            <input
-              ref={trackKeyRef}
-              type="text"
-              className="flex-grow p-2 border rounded-md mr-2"
-              placeholder="Type a message"
-              id="message"
-              name="message"
-              required
-            />
-            <button
-              className="bg-blue-500 text-white p-2 rounded-md"
-              type="submit"
-            >
-              Send
-            </button>
-          </form>
+
+          {
+            friend ? friend.isBlock && friend.blockSender === myInfo?._id ? <h1 className="text-center p-5">For send message, you need to unblock</h1> :  friend.isBlock && friend?.blockSender === id ? <h1 className="text-center p-5">{user?.name} has blocked you</h1> : !friend.isBlock && <SubmitMessage handleSubmit={handleSubmit} trackKeyRef={trackKeyRef} /> : <SubmitMessage handleSubmit={handleSubmit} trackKeyRef={trackKeyRef} />
+          }
         </div>
       </div>
     </div>

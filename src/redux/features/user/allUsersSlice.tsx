@@ -20,7 +20,7 @@ const allUsersSlice = createSlice({
         },
         replaceUser: (state, action) => {
             const updateUser = action.payload as userTypeCheck
-            const index = state.users.findIndex(user => user._id === updateUser._id)
+            const index = state.users.findIndex(user => user?._id === updateUser?._id)
             
             if(index > -1){
                 state.users[index] = updateUser

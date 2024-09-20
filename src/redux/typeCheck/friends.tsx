@@ -7,6 +7,9 @@ interface friends {
   receiverId: userTypeCheck;
   senderId: userTypeCheck;
   updatedAt: string;
+  _id: string;
+  isBlock: boolean;
+  blockSender: string
 }
 
 export default friends;

@@ -40,7 +40,7 @@ const Aside = () => {
       socket.off("users");
     }
   }, [dispatch]);
-  console.log("users", users)
+  
   const handleUserScroll = useCallback(() => {
     const element = userListRef.current
     
@@ -55,7 +55,7 @@ const Aside = () => {
     }
   },[hasMore, isLoading, dispatch, page])
 
-  console.log("page", page)
+  
   useEffect(() => {
     const element = userListRef.current
     if(element){
