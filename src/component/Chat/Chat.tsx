@@ -284,7 +284,7 @@ const ChatLayout: React.FC = () => {
             ))}
             <div ref={scrollRef} />
           </div>
-          {upcomingMessage && countDown !== 0 && (
+          {upcomingMessage && countDown !== 0 && upcomingMessage.senderId === id && (
             <div className="justify-start mt-auto m-5 block bg-white p-5">
               <div className=" rounded-lg w-full  text-gray-900">
                 upcoming: {upcomingMessage?.message}
