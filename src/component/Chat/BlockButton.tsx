@@ -39,7 +39,7 @@ const BlockButton: React.FC<BlockButtonProps> = ({id, myInfo}) => {
         const chatId = friend._id
         if(friend.receiverId?._id === id || friend.senderId?._id === id) {
           return <>
-            {friend.isBlock && friend.blockSender === myInfo._id ? <button onClick={() => handleBlock(chatId, false)} className="px-5 py-2 bg-green-600 font-semibold text-white rounded-md hover:bg-white hover:text-black border border-black cursor-pointer">Unblock</button> : !friend.isBlock && <div onClick={() => handleBlock(chatId, true)} className="px-5 py-2 bg-red-600 font-semibold text-white rounded-md hover:bg-white hover:text-black border border-black cursor-pointer">Block</div>}
+            {friend.isBlock && friend.blockSender === myInfo._id ? <button onClick={() => handleBlock(chatId, false)} className="mr-10 md:mr-0 px-5 py-2 bg-green-600 font-semibold text-white rounded-md hover:bg-white hover:text-black border border-black cursor-pointer">Unblock</button> : !friend.isBlock && <div onClick={() => handleBlock(chatId, true)} className="mr-10 md:mr-0 px-5 py-2 bg-red-600 font-semibold text-white rounded-md hover:bg-white hover:text-black border border-black cursor-pointer">Block</div>}
           </>
         }
       })}

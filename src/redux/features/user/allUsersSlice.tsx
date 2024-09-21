@@ -25,6 +25,14 @@ const allUsersSlice = createSlice({
             if(index > -1){
                 state.users[index] = updateUser
             }
+        },
+        addMyDayUpdateInUsers: (state, action) => {
+            const {_id, myDay, myDayEndAt} = action.payload as userTypeCheck
+            const index = state.users.findIndex(user => user._id === _id)
+            if(index > -1){
+                state.users[index].myDay = myDay
+                state.users[index].myDayEndAt = myDayEndAt
+            }
         }
     },
     extraReducers: (builder) => {
@@ -51,6 +59,6 @@ const allUsersSlice = createSlice({
     }
 })
 
-export const { replaceUser, incrementPage } = allUsersSlice.actions;
+export const { replaceUser, incrementPage, addMyDayUpdateInUsers } = allUsersSlice.actions;
 
 export default allUsersSlice.reducer;

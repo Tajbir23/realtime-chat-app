@@ -4,6 +4,9 @@ import Signup from "../pages/Authentication/Signup";
 import Login from "../pages/Authentication/Login";
 import ProtectedRoute from "./protectedRoute";
 import ChatLayout from "../component/Chat/Chat";
+import CreateMyDay from "../pages/MyDay/CreateMyDay";
+import Day from "../pages/MyDay/Day";
+import MyDay from "../pages/MyDay/MyDay";
 
 const router = createBrowserRouter([
     {
@@ -13,6 +16,18 @@ const router = createBrowserRouter([
             {
                 path: "chat/:id",
                 element: <ChatLayout />
+            },
+            {
+                path: "create_day",
+                element: <CreateMyDay />
+            },
+            {
+                path: "day/:id",
+                element: <Day />
+            },
+            {
+                path: "my_day",
+                element: <MyDay />
             }
         ]
     },

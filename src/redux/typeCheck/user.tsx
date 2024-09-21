@@ -7,6 +7,8 @@ interface userTypeCheck{
     photoUrl: string;
     isActive: boolean;
     lastActive: number;
+    myDay: string;
+    myDayEndAt: number
 }
 
 export default userTypeCheck

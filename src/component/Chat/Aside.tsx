@@ -10,6 +10,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import allUsers from "../../redux/thunks/allUserThunks";
 import { AppDispatch } from "../../redux/app/store";
 import Friends from "./friends/Friends";
+import MyDayButton from "./myDay/MyDayButton";
 
 
 // const socket = io(`${import.meta.env.VITE_API}`);
@@ -26,6 +27,10 @@ const Aside = () => {
   const [searchUsers, setSearchUsers] = useState<userTypeCheck[]>([]);
   const searchResultRef = useRef<HTMLUListElement>(null);
   const [searchResultVisible, setSearchResultVisible] = useState(false)
+  const [visibleMyDayButton, setVisibleMyDayButton] = useState(false)
+  const myDayButtonRef = useRef<HTMLDivElement>(null)
+
+  console.log("users", users)
 
   useEffect(() => {
     dispatch(allUsers(1))
@@ -40,6 +45,8 @@ const Aside = () => {
       socket.off("users");
     }
   }, [dispatch]);
+
+  
   
   const handleUserScroll = useCallback(() => {
     const element = userListRef.current
@@ -102,8 +109,24 @@ useEffect(() => {
     }
   },[search, searchUsers])
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent | KeyboardEvent) => {
+      if(myDayButtonRef.current &&!myDayButtonRef.current.contains(event.target as Node)){
+        setVisibleMyDayButton(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('touchstart', handleClickOutside)
+    document.addEventListener('keydown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+      document.removeEventListener('keydown', handleClickOutside)
+    }
+  },[myDayButtonRef])
+
   return (
-    <div data-aos="fade-right">
+    <div>
       <button
         onClick={() => dispatch(toggle())}
         data-drawer-target="default-sidebar"
@@ -130,23 +153,25 @@ useEffect(() => {
 
       <aside
         id="default-sidebar"
-        className={`fixed top-0 left-0 z-40 w-full h-screen overflow-hidden transition-transform sm:w-80 ${
+        className={`fixed top-0 left-0 z-10 w-full h-screen overflow-hidden transition-transform sm:w-80 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } sm:translate-x-0`}
         aria-label="Sidebar"
       >
         <div className="h-full flex flex-col px-3 bg-gray-50">
-          <div className="flex justify-between items-center p-2 fixed overflow-hidden bg-white z-50 w-full">
+          <div className="flex justify-between items-center p-2 fixed overflow-hidden w-full">
             <div className="flex items-center gap-4">
               <img
-                className="h-8 w-8 rounded-full border-blue-900 border-[4px]"
+                onClick={() => setVisibleMyDayButton(!visibleMyDayButton)}
+                className="h-8 w-8 rounded-full border-blue-900 border-[4px] cursor-pointer"
                 src={user?.photoUrl}
                 alt="image not found"
               />
               <div>
                 <h1 className="text-lg font-bold">{user?.name}</h1>
-                <p>Active</p>
               </div>
+              
+              
             </div>
             <div
               className="cursor-pointer inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
@@ -173,7 +198,7 @@ useEffect(() => {
           </div>
 
           {/* here search result */}
-          {searchResultVisible && <ul ref={searchResultRef} className="absolute top-32 z-50 bg-white shadow-2xl p-5">
+          {searchResultVisible && <ul ref={searchResultRef} className="absolute top-32 z-10 bg-white shadow-2xl p-5">
             {searchUsers?.map(user => (
               <li key={user._id}>
                 <NavLink to={`/chat/${user._id}`} onClick={() => dispatch(toggle())} className="cursor-pointer flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group" >
@@ -187,7 +212,9 @@ useEffect(() => {
               </li>
             ))}
           </ul>}
-
+          {visibleMyDayButton && <div ref={myDayButtonRef} className="absolute left-5 top-14 z-50">
+            <MyDayButton />
+          </div>}
             <Friends />
 
           <ul ref={userListRef} className="space-y-2 font-medium overflow-y-auto flex-grow px-3 h-1/2">
