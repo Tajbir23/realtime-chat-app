@@ -30,7 +30,6 @@ const Aside = () => {
   const [visibleMyDayButton, setVisibleMyDayButton] = useState(false)
   const myDayButtonRef = useRef<HTMLDivElement>(null)
 
-  console.log("users", users)
 
   useEffect(() => {
     dispatch(allUsers(1))

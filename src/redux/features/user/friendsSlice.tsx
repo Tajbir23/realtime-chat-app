@@ -36,16 +36,7 @@ const friendsSlice = createSlice({
                 state.friends[index] = updateFriend
             }
         },
-        addMyDayUpdateInFriend: (state, action) => {
-            const {_id, myDay, myDayEndAt} = action.payload as userTypeCheck
-            const index = state.friends.findIndex(friend => friend._id === _id)
-            console.log("adding", _id, myDay, myDayEndAt)
-            if(index > -1){
-                state.friends[index].myDay = myDay
-                state.friends[index].myDayEndAt = myDayEndAt
-            }
-            
-        }
+        
     },
     extraReducers: (builder) => {
         builder
@@ -67,6 +58,6 @@ const friendsSlice = createSlice({
     }
 })
 
-export const { incrementPage, replaceFriends, updateFriendActiveStatus, addMyDayUpdateInFriend } = friendsSlice.actions;
+export const { incrementPage, replaceFriends, updateFriendActiveStatus} = friendsSlice.actions;
 
 export default friendsSlice.reducer;
