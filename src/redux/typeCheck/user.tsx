@@ -10,6 +10,7 @@ interface userTypeCheck{
     myDay: string;
     myDayEndAt: number;
     isActiveMyDay: boolean;
+    myDayId: string;
 }
 
 export default userTypeCheck

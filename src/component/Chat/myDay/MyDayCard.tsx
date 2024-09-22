@@ -1,9 +1,54 @@
 import { FaComment, FaHeart, FaShare } from "react-icons/fa"
 import userTypeCheck from "../../../redux/typeCheck/user"
+import { useEffect, useState } from "react"
 
 
 const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
-    console.log(user)
+  const [totalLike, setTotalLike] = useState(0)
+  const [like, setLike] = useState(false)
+  const [message, setMessage] = useState()
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API}/api/total_like_and_comments`,{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({userId: user._id, myDayId: user.myDayId}),
+    }).then((res) => res.json())
+    .then((data) => {
+      setTotalLike(data.totalLike)
+      setLike(data.myLike)
+    })
+
+
+  }, [message, user])
+
+    const handleLike = async() => {
+      if(!like){
+        setLike(true)
+        setTotalLike(totalLike + 1)
+      }
+
+      const res = await fetch(`${import.meta.env.VITE_API}/api/like`,{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({userId: user._id, myDayId: user.myDayId}),
+      })
+
+      const data = await res.json()
+      if(res.ok){
+        setTotalLike(data.totalLike)
+        setMessage(data.message)
+        if(res.status === 200){
+          setLike(false)
+        }
+      }
+    }
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl bg-white rounded-lg shadow-md overflow-hidden">
@@ -31,9 +76,9 @@ const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
         </div>
         <div className="border-t border-gray-200 px-6 py-4">
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0">
-            <button className="flex items-center justify-center sm:justify-start w-full sm:w-auto px-4 py-2 text-sm sm:text-base text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200">
-              <FaHeart className="w-5 h-5 mr-2 text-red-500" />
-              <span>Like (42)</span>
+            <button onClick={() => handleLike()} className="flex items-center justify-center sm:justify-start w-full sm:w-auto px-4 py-2 text-sm sm:text-base text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200">
+              <FaHeart className={`w-5 h-5 mr-2 ${like ? 'text-red-500' : ''}`} />
+              <span>Like ({totalLike})</span>
             </button>
             <button className="flex items-center justify-center sm:justify-start w-full sm:w-auto px-4 py-2 text-sm sm:text-base text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200">
               <FaComment className="w-5 h-5 mr-2 text-blue-500" />
