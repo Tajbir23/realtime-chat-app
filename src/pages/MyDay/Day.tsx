@@ -14,9 +14,9 @@ const Day = () => {
   const { users } = useSelector((state: { allUsers: allUsersState }) => state.allUsers);
 
   useEffect(() => {
-    const friend = friends.find(friend => friend.receiverId._id === id || friend.senderId._id === id);
+    const friend = friends.find(friend => friend.receiverId?._id === id || friend.senderId?._id === id);
     const friendData = friend?.receiverId ? friend.receiverId : friend?.senderId;
-    const userData = users.find(user => user._id === id);
+    const userData = users.find(user => user?._id === id);
     
     if (friendData) {
       setUser(friendData);
