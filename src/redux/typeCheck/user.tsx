@@ -8,7 +8,8 @@ interface userTypeCheck{
     isActive: boolean;
     lastActive: number;
     myDay: string;
-    myDayEndAt: number
+    myDayEndAt: number;
+    isActiveMyDay: boolean;
 }
 
 export default userTypeCheck

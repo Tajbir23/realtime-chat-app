@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../../redux/app/store";
 import friendsThunk from "../../../redux/thunks/friendsThunks";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import friends from "../../../redux/typeCheck/friends";
 import { socket } from "../../../hooks/useSocket";
 import { replaceFriends, updateFriendActiveStatus } from "../../../redux/features/user/friendsSlice";
@@ -24,7 +24,7 @@ const Friends: React.FC = () => {
     (state: { user: { user: userTypeCheck } }) => state.user.user
   );
 
-  console.log(friends)
+  
   const friendListRef = useRef<HTMLUListElement>(null)
 
   const dispatch = useDispatch<AppDispatch>();
@@ -103,11 +103,17 @@ const Friends: React.FC = () => {
               to={`/chat/${friend.receiverId?._id || friend.senderId?._id}`}
               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full"
             >
+              {friend.senderId?.isActiveMyDay || friend.receiverId?.isActiveMyDay && friend.senderId?.myDayEndAt > Number(Date.now()) || friend.receiverId?.myDayEndAt > Number(Date.now()) ? <Link to={`/day/${friend.senderId?._id || friend.receiverId?._id}`}>
               <img
+                src={friend.receiverId?.photoUrl || friend.senderId?.photoUrl}
+                className="h-8 w-8 rounded-full ring-4 ring-blue-500"
+                alt="image not found"
+              />
+              </Link> : <img
                 src={friend.receiverId?.photoUrl || friend.senderId?.photoUrl}
                 className="h-8 w-8 rounded-full"
                 alt="image not found"
-              />
+              />}
               <div className="w-full">
                 <div className="flex items-center">
                   <span className="ms-3 mr-auto">

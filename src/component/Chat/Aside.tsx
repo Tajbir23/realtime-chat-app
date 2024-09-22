@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggle } from "../../redux/features/toggle/toggleSlice";
 import userTypeCheck from "../../redux/typeCheck/user";
 import ToggleStateCheck from "../../redux/typeCheck/toggle";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { socket } from "../../hooks/useSocket";
 import { incrementPage, replaceUser } from "../../redux/features/user/allUsersSlice";
 import allUsersState from "../../redux/typeCheck/allUserState";
@@ -226,11 +226,22 @@ useEffect(() => {
                     to={`/chat/${chatUser._id}`}
                     className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group"
                   >
-                    <img
+                    {/* <img
                       src={chatUser.photoUrl}
                       className="h-8 w-8 rounded-full"
                       alt="image not found"
+                    /> */}
+                    {chatUser?.isActiveMyDay && chatUser?.myDayEndAt > Number(Date.now()) ? <Link to={`/day/${chatUser?._id}`}>
+                    <img
+                      src={chatUser.photoUrl}
+                      className="h-8 w-8 rounded-full ring-4 ring-blue-500"
+                      alt="image not found"
                     />
+                    </Link> : <img
+                      src={chatUser.photoUrl}
+                      className="h-8 w-8 rounded-full"
+                      alt="image not found"
+                    />}
                     <span className="ms-3 mr-auto">{chatUser.name}</span>
                     <p className="ms-4 text-sm ">
                       {chatUser.isActive ? (
