@@ -1,50 +1,71 @@
-# React + TypeScript + Vite
+# Chat App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A real-time chat application built using React.js, Redux, TypeScript, Node.js, Express.js, Socket.io, and Mongoose, styled with Tailwind CSS. The application supports live chat functionality with user authentication and message handling through a WebSocket connection.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Real-time Chat:** Instant messaging with WebSocket (Socket.io)
+- **Friend List:** Manage and view a list of friends
+- **Real-time Active Status:** See which friends are currently online
+- **Block/Unblock Users:** Block and unblock users from sending messages
+- **Browser Notifications:** Receive notifications for new messages and events
+- **My Day:** Share daily updates (like stories)
+- **My Day Likes and Comments:** Like and comment on your friends' updates
 
-## Expanding the ESLint configuration
+## Technologies
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Frontend:**
+  - React.js
+  - Redux Toolkit
+  - TypeScript
+  - Tailwind CSS
+- **Backend:**
+  - Node.js
+  - Express.js
+  - Socket.io
+  - Mongoose (MongoDB)
 
-- Configure the top-level `parserOptions` property like this:
+## Installation
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+### Prerequisites
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+- **Node.js**: Install from [Node.js official site](https://nodejs.org/)
+- **MongoDB**: Set up MongoDB on your local machine or use [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) for a cloud-based solution
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+### Steps
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+1. **Clone the Repositories:**
+
+   - **Client Side:**
+     ```bash
+     git clone https://github.com/Tajbir23/realtime-chat-app.git
+     cd realtime-chat-app
+     ```
+
+   - **Server Side:**
+     ```bash
+     git clone https://github.com/Tajbir23/realtime-chat-app-server.git
+     cd realtime-chat-app-server
+     ```
+
+2. **Install Dependencies:**
+
+   Install the dependencies for both the client and server:
+
+   ```bash
+   # Install client dependencies
+   cd client
+   npm install
+
+    VITE_API=your_api_url
+    VITE_IMAGE_SECRET=your_image_secret
+    VITE_CLOUDINARY_CLOUDNAME=your_cloudinary_cloudname
+
+
+   # Install server dependencies
+   cd ../server
+   npm install
+
+    PORT=5000
+    MONGODB_URI=your_mongodb_connection_string
+    JWT_SECRET=your_jwt_secret
