@@ -6,8 +6,10 @@ import CommentSection from "./CommentSection"
 
 const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
   const [totalLike, setTotalLike] = useState(0)
+  const [totalComment, setTotalComment] = useState(0)
   const [like, setLike] = useState(false)
   const [message, setMessage] = useState()
+  const [isCommentOpen, setIsCommentOpen] = useState(false)
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API}/api/total_like_and_comments`,{
@@ -21,6 +23,7 @@ const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
     .then((data) => {
       setTotalLike(data.totalLike)
       setLike(data.myLike)
+      setTotalComment(data.totalComment)
     })
 
 
@@ -81,9 +84,9 @@ const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
               <FaHeart className={`w-5 h-5 mr-2 ${like ? 'text-red-500' : ''}`} />
               <span>{like ? "Liked" : "Like"} ({totalLike})</span>
             </button>
-            <button className="flex items-center justify-center sm:justify-start w-full sm:w-auto px-4 py-2 text-sm sm:text-base text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200">
+            <button onClick={() => setIsCommentOpen(!isCommentOpen)} className="flex items-center justify-center sm:justify-start w-full sm:w-auto px-4 py-2 text-sm sm:text-base text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200">
               <FaComment className="w-5 h-5 mr-2 text-blue-500" />
-              <span>Comment (7)</span>
+              <span>Comment ({totalComment})</span>
             </button>
             <button className="flex items-center justify-center sm:justify-start w-full sm:w-auto px-4 py-2 text-sm sm:text-base text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200">
               <FaShare className="w-5 h-5 mr-2 text-green-500" />
@@ -92,7 +95,7 @@ const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
           </div>
         </div>
       </div>
-      <CommentSection />
+      {isCommentOpen && <CommentSection myDayId={user.myDayId} userId={user._id} />}
     </div>
   )
 }

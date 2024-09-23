@@ -1,13 +1,15 @@
 
 import Aside from "../component/Chat/Aside"
 
-import { Outlet } from "react-router-dom"
+import { Outlet, useNavigate } from "react-router-dom"
 import Aos from "aos";
 import 'aos/dist/aos.css';
 import { useEffect } from "react";
+import { socket } from "../hooks/useSocket";
 
 
 const Chat = () => {
+  const navigate = useNavigate()
   useEffect(() => {
     Aos.init({
       duration: 1000,
@@ -16,8 +18,25 @@ const Chat = () => {
   },[])
 
   useEffect(() => {
+    Notification.requestPermission();
     if(Notification.permission === 'default'){
       Notification.requestPermission();
+    }
+  },[])
+
+  useEffect(() => {
+    socket.on('likeAndCommentNotification', (data) => {
+      const notification = new Notification('like', {
+        body: data?.message,
+        icon: '/favicon.ico',
+      });
+      notification.onclick = () => {
+        window.focus()
+        navigate(`/my_day`)
+      };
+    })
+    return () => {
+      socket.off('likeAndCommentNotification')
     }
   },[])
 
