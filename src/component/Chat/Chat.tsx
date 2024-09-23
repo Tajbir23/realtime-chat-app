@@ -14,6 +14,7 @@ import upcomingMessageType from "../../redux/typeCheck/upcomingMessageType";
 import BlockButton from "./BlockButton";
 import friends from "../../redux/typeCheck/friends";
 import SubmitMessage from "./SubmitMessage";
+import message from "../../redux/typeCheck/message";
 
 const ChatLayout: React.FC = () => {
   const { id } = useParams();
@@ -73,10 +74,20 @@ const ChatLayout: React.FC = () => {
   }, [loadMoreMessages]);
 
   useEffect(() => {
-    const handleIncomingMessage = (message: {
-      receiverUsername: string;
-      senderUsername: string;
-    }) => {
+    const handleNotification = (username: string, message: string ,chatId: string, icon: string) => {
+      if(Notification.permission === 'granted'){
+        const notification = new Notification(username, {
+          body: message || 'You have new messages',
+          icon: icon || '/favicon.ico',
+        });
+        notification.onclick = () => {
+          window.focus()
+          navigate(`/chat/${chatId}`);
+        };
+      }
+    }
+
+    const handleIncomingMessage = (message: message) => {
       setCountDown(0);
       // Only dispatch the message if it's intended for the current user
       if (
@@ -84,10 +95,20 @@ const ChatLayout: React.FC = () => {
         message?.senderUsername === myInfo?.username
       ) {
         dispatch(adMessage(message));
+        console.log(message)
+        if(message?.senderUsername === myInfo?.username){
+          handleNotification(message.receiverName, message.message, message.receiverId, message.receiverPhotoUrl)
+        }else if(message?.receiverUsername === myInfo?.username){
+          handleNotification(message.senderName, message.message, message.senderId, message.senderPhotoUrl)
+        }
       }
     };
 
     socket.on("message", handleIncomingMessage);
+
+    return () => {
+      socket.off("message", handleIncomingMessage);
+    };
   }, [dispatch, myInfo?.username]);
 
   useEffect(() => {

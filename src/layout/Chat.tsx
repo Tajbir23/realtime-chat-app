@@ -15,7 +15,11 @@ const Chat = () => {
     })
   },[])
 
-
+  useEffect(() => {
+    if(Notification.permission === 'default'){
+      Notification.requestPermission();
+    }
+  },[])
 
   return (
     <div className="flex gap-1">
