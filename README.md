@@ -2,7 +2,7 @@
 
 A real-time chat application built using React.js, Redux, TypeScript, Node.js, Express.js, Socket.io, and Mongoose, styled with Tailwind CSS. The application supports live chat functionality with user authentication and message handling through a WebSocket connection.
 
-# [Live Link](https://realtime-chat-app-tajbir.web.app/login)
+# [Live Link](https://realtime-chat-app-tajbir.web.app)
 
 ## Features
 
