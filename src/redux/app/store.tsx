@@ -5,6 +5,7 @@ import userReducer from '../features/user/userSlice';
 import messageReducer from '../features/message/messageSlice';
 import allUsersReducer from '../features/user/allUsersSlice';
 import friendsReducer from '../features/user/friendsSlice';
+import totalLikeCommentReducer from '../features/likeAndComment/totalLikeCommentSlice';
 
 
 const store = configureStore({
@@ -13,7 +14,8 @@ const store = configureStore({
     user: userReducer,
     message: messageReducer,
     allUsers: allUsersReducer,
-    friends: friendsReducer
+    friends: friendsReducer,
+    totalLikeComment: totalLikeCommentReducer
   },
 });
 
