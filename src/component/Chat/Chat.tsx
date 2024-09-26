@@ -180,8 +180,8 @@ const ChatLayout: React.FC = () => {
         }),
       });
 
-      const result = await response.json();
-      console.log(result);
+      // const result = await response.json();
+      // console.log(result);
       if (response.status === 401 || response.status === 403) {
         localStorage.removeItem("token");
         return navigate("/login");

@@ -2,6 +2,10 @@ import { FaComment, FaHeart, FaShare } from "react-icons/fa"
 import userTypeCheck from "../../../redux/typeCheck/user"
 import { useEffect, useState } from "react"
 import CommentSection from "./CommentSection"
+import { useDispatch, useSelector } from "react-redux"
+import totalLikeCommentThunk from "../../../redux/thunks/totalLikeCommentThunks"
+import { AppDispatch } from "../../../redux/app/store"
+import totalLikeCommentType from '../../../redux/typeCheck/totalLikeCommentType';
 
 
 const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
@@ -10,6 +14,10 @@ const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
   const [like, setLike] = useState(false)
   const [message, setMessage] = useState()
   const [isCommentOpen, setIsCommentOpen] = useState(false)
+  const dispatch = useDispatch<AppDispatch>()
+  const totalLikeComment = useSelector((state: {totalLikeComment: totalLikeCommentType}) => state)
+
+  console.log('total like comment',totalLikeComment.totalLikeComment)
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API}/api/total_like_and_comments`,{
@@ -26,8 +34,11 @@ const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
       setTotalComment(data.totalComment)
     })
 
+    if(user){
+      dispatch(totalLikeCommentThunk({ userId: user?._id, myDayId: user?.myDayId }));
 
-  }, [message, user])
+    }
+  }, [message, user, dispatch])
 
     const handleLike = async() => {
       if(!like){

@@ -26,6 +26,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     }
 
     socket.emit('connected', userData.user)
+    console.log(userData.user)
     
     if(userData?.user?.error === "read ECONNRESET" || !token){
       localStorage.removeItem('token')
