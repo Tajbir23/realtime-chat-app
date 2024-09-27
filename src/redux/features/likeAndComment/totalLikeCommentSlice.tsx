@@ -2,7 +2,11 @@ import { createSlice } from '@reduxjs/toolkit';
 import totalLikeCommentType from '../../typeCheck/totalLikeCommentType';
 import totalLikeCommentThunk from '../../thunks/totalLikeCommentThunks';
 const initialState = {
-    totalLikeComment: {} as totalLikeCommentType,
+    totalLikeComment: {
+        totalLike: 0,
+        totalComment: 0,
+        like: false,
+    } as totalLikeCommentType,
     isLoading: false,
     error: Error,
 }
@@ -14,8 +18,11 @@ const totalLikeCommentSlice = createSlice({
         incrementLike : (state) => {
             state.totalLikeComment.totalLike += 1
         },
-        myLike: (state) => {
-            state.totalLikeComment.like = !state.totalLikeComment.like
+        myLike: (state, action) => {
+            state.totalLikeComment.like = action.payload
+        },
+        addTotalLike: (state, action) => {
+            state.totalLikeComment.totalLike = action.payload
         }
     },
     extraReducers: (builder) => {
@@ -29,6 +36,7 @@ const totalLikeCommentSlice = createSlice({
             state.error = null as unknown as ErrorConstructor
             state.totalLikeComment.totalLike = action.payload.totalLike
             state.totalLikeComment.totalComment = action.payload.totalComment
+            state.totalLikeComment.like = action.payload.myLike
         })
         .addCase(totalLikeCommentThunk.rejected, (state, action) => {
             state.isLoading = false
@@ -37,6 +45,6 @@ const totalLikeCommentSlice = createSlice({
     },
 })
 
-export const { incrementLike, myLike } = totalLikeCommentSlice.actions;
+export const { incrementLike, myLike, addTotalLike } = totalLikeCommentSlice.actions;
 
 export default totalLikeCommentSlice.reducer;

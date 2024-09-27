@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import commentInterface from "../../../redux/typeCheck/comment"
+import { useDispatch } from "react-redux"
+import totalLikeCommentThunk from "../../../redux/thunks/totalLikeCommentThunks"
+import { AppDispatch } from "../../../redux/app/store"
 
 
 const CommentSection: React.FC<{myDayId: string, userId: string}> = ({myDayId, userId}) => {
   const [message, setMessage] = useState('')
   const [comments, setComments] = useState<commentInterface[]>([])
+  const dispatch = useDispatch<AppDispatch>()
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API}/api/comments/${myDayId}`,{
       method: "GET",
@@ -14,7 +18,8 @@ const CommentSection: React.FC<{myDayId: string, userId: string}> = ({myDayId, u
       },
     }).then((res) => res.json())
     .then((data) => setComments(data))
-  },[message, myDayId])
+    
+  },[message, myDayId, dispatch, userId])
 
   console.log(comments)
 
@@ -35,6 +40,9 @@ const CommentSection: React.FC<{myDayId: string, userId: string}> = ({myDayId, u
     if(res.ok){
       toast.success("Comment posted successfully");
       (e.target as HTMLFormElement).comment.value = ""
+      if(userId && myDayId){
+        dispatch(totalLikeCommentThunk({userId, myDayId}))
+      }
     }
     const data = await res.json()
     setMessage(data.message)

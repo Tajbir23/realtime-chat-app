@@ -6,34 +6,17 @@ import { useDispatch, useSelector } from "react-redux"
 import totalLikeCommentThunk from "../../../redux/thunks/totalLikeCommentThunks"
 import { AppDispatch } from "../../../redux/app/store"
 import totalLikeCommentType from '../../../redux/typeCheck/totalLikeCommentType';
+import { addTotalLike, incrementLike, myLike } from "../../../redux/features/likeAndComment/totalLikeCommentSlice"
 
 
 const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
-  const [totalLike, setTotalLike] = useState(0)
-  const [totalComment, setTotalComment] = useState(0)
-  const [like, setLike] = useState(false)
   const [message, setMessage] = useState()
   const [isCommentOpen, setIsCommentOpen] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
-  const totalLikeComment = useSelector((state: {totalLikeComment: totalLikeCommentType}) => state)
+  const totalLikeComment = useSelector((state: {totalLikeComment: {totalLikeComment: totalLikeCommentType}}) => state)
 
-  console.log('total like comment',totalLikeComment.totalLikeComment)
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API}/api/total_like_and_comments`,{
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({userId: user._id, myDayId: user.myDayId}),
-    }).then((res) => res.json())
-    .then((data) => {
-      setTotalLike(data.totalLike)
-      setLike(data.myLike)
-      setTotalComment(data.totalComment)
-    })
-
     if(user){
       dispatch(totalLikeCommentThunk({ userId: user?._id, myDayId: user?.myDayId }));
 
@@ -41,9 +24,9 @@ const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
   }, [message, user, dispatch])
 
     const handleLike = async() => {
-      if(!like){
-        setLike(true)
-        setTotalLike(totalLike + 1)
+      if(!totalLikeComment.totalLikeComment.totalLikeComment.like){
+        dispatch(myLike(true))
+        dispatch(incrementLike())
       }
 
       const res = await fetch(`${import.meta.env.VITE_API}/api/like`,{
@@ -52,18 +35,20 @@ const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({userId: user._id, myDayId: user.myDayId}),
+        body: JSON.stringify({userId: user._id, myDayId: user.myDayId, like: totalLikeComment.totalLikeComment.totalLikeComment.like}),
       })
 
       const data = await res.json()
       if(res.ok){
-        setTotalLike(data.totalLike)
+        dispatch(addTotalLike(data.totalLike))
         setMessage(data.message)
         if(res.status === 200){
-          setLike(false)
+          dispatch(myLike(true))
         }
       }
     }
+
+    console.log(totalLikeComment.totalLikeComment.totalLikeComment.like)
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl bg-white rounded-lg shadow-md overflow-hidden">
@@ -92,12 +77,12 @@ const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
         <div className="border-t border-gray-200 px-6 py-4">
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0">
             <button onClick={() => handleLike()} className="flex items-center justify-center sm:justify-start w-full sm:w-auto px-4 py-2 text-sm sm:text-base text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200">
-              <FaHeart className={`w-5 h-5 mr-2 ${like ? 'text-red-500' : ''}`} />
-              <span>{like ? "Liked" : "Like"} ({totalLike})</span>
+              <FaHeart className={`w-5 h-5 mr-2 ${totalLikeComment.totalLikeComment.totalLikeComment.like ? 'text-red-500' : ''}`} />
+              <span>{totalLikeComment.totalLikeComment.totalLikeComment.like ? "Liked" : "Like"} ({totalLikeComment.totalLikeComment.totalLikeComment.totalLike})</span>
             </button>
             <button onClick={() => setIsCommentOpen(!isCommentOpen)} className="flex items-center justify-center sm:justify-start w-full sm:w-auto px-4 py-2 text-sm sm:text-base text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200">
               <FaComment className="w-5 h-5 mr-2 text-blue-500" />
-              <span>Comment ({totalComment})</span>
+              <span>Comment ({totalLikeComment.totalLikeComment.totalLikeComment.totalComment})</span>
             </button>
             <button className="flex items-center justify-center sm:justify-start w-full sm:w-auto px-4 py-2 text-sm sm:text-base text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200">
               <FaShare className="w-5 h-5 mr-2 text-green-500" />
