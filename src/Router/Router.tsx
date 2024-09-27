@@ -7,6 +7,7 @@ import ChatLayout from "../component/Chat/Chat";
 import CreateMyDay from "../pages/MyDay/CreateMyDay";
 import Day from "../pages/MyDay/Day";
 import MyDay from "../pages/MyDay/MyDay";
+import SharedMyDay from "../component/Chat/myDay/SharedMyDay";
 
 const router = createBrowserRouter([
     {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
     {
         path: "/login",
         element: <Login />
+    },
+    {
+        path: "/share/:id",
+        element: <SharedMyDay />
     }
 ])
 

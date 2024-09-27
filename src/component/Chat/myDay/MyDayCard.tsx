@@ -48,7 +48,32 @@ const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
       }
     }
 
-    console.log(totalLikeComment.totalLikeComment.totalLikeComment.like)
+
+    const handleShare = () => {
+      if (navigator.share) {
+        navigator.share({
+          title: "Check out this post!",
+          text: `Take a look at ${user.name}'s post on MyDay!`,
+          url: `${window.location.origin}/share/${user.myDayId}`, // Can replace with a specific URL
+        })
+        .then(() => {
+          fetch(`${import.meta.env.VITE_API}/api/share`,{
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({share: true, myDayId: user.myDayId}),
+          }).then(() => {
+            dispatch(totalLikeCommentThunk({ userId: user?._id, myDayId: user?.myDayId }));
+          })
+        })
+        .catch((error) => console.error("Error sharing", error));
+      } else {
+        console.error("Web Share API not supported in this browser");
+      }
+    };
+
+    console.log(`${window.location.origin}/share/${user.myDayId}`)
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl bg-white rounded-lg shadow-md overflow-hidden">
@@ -84,9 +109,10 @@ const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
               <FaComment className="w-5 h-5 mr-2 text-blue-500" />
               <span>Comment ({totalLikeComment.totalLikeComment.totalLikeComment.totalComment})</span>
             </button>
-            <button className="flex items-center justify-center sm:justify-start w-full sm:w-auto px-4 py-2 text-sm sm:text-base text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200">
+            <button onClick={() => handleShare()} className="flex items-center justify-center sm:justify-start w-full sm:w-auto px-4 py-2 text-sm sm:text-base text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200">
               <FaShare className="w-5 h-5 mr-2 text-green-500" />
-              <span>Share (3)</span>
+              
+              <span>Share ({totalLikeComment.totalLikeComment.totalLikeComment.totalShare})</span>
             </button>
           </div>
         </div>
