@@ -45,7 +45,9 @@ const Aside = () => {
     }
   }, [dispatch]);
 
-  
+  useEffect(() => {
+    socket.emit('connected', user)
+  },[user])
   
   const handleUserScroll = useCallback(() => {
     const element = userListRef.current

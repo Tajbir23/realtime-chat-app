@@ -95,6 +95,7 @@ const Friends: React.FC = () => {
     <ul ref={friendListRef} className="space-y-2 z-0 font-medium my-5 pb-5 border-b-2 min-h-10 max-h-72 overflow-y-auto px-3">
       <li className="text-xl font-bold bg-gray-50">Friends</li>
       {friends.friends.length > 0 && friends.friends.map((friend) => {
+        console.log(friend)
         return (
           <>
             <li>
