@@ -73,7 +73,7 @@ const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
       }
     };
 
-    console.log(`${window.location.origin}/share/${user.myDayId}`)
+    
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl bg-white rounded-lg shadow-md overflow-hidden">

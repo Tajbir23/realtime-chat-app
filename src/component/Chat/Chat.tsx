@@ -95,7 +95,6 @@ const ChatLayout: React.FC = () => {
         message?.senderUsername === myInfo?.username
       ) {
         dispatch(adMessage(message));
-        console.log(message)
         if(message?.senderUsername === myInfo?.username){
           handleNotification(message.receiverName, message.message, message.receiverId, message.receiverPhotoUrl)
         }else if(message?.receiverUsername === myInfo?.username){
@@ -180,8 +179,6 @@ const ChatLayout: React.FC = () => {
         }),
       });
 
-      // const result = await response.json();
-      // console.log(result);
       if (response.status === 401 || response.status === 403) {
         localStorage.removeItem("token");
         return navigate("/login");
