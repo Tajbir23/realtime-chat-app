@@ -93,10 +93,7 @@ const MyDayCard: React.FC<{user: userTypeCheck}> = ({user}) => {
           <div className="mt-4">
             <p className="text-gray-600 text-base sm:text-lg mb-4" dangerouslySetInnerHTML={{__html: user.myDay}} />
               
-            {/* <div className="bg-gray-100 p-3 rounded-lg text-sm sm:text-base">
-              <p className="font-semibold mb-1">Today's Reflection:</p>
-              <p className="italic">"The sea, once it casts its spell, holds one in its net of wonder forever." - Jacques Cousteau</p>
-            </div> */}
+            
           </div>
         </div>
         <div className="border-t border-gray-200 px-6 py-4">
