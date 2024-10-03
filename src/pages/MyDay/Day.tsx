@@ -24,7 +24,7 @@ const Day = () => {
       setUser(userData);
     }
   }, [id, friends, users]);
-  console.log(user)
+  
   return (
     <div className="sm:ml-80 w-full">
       {user && <MyDayCard user={user} />}
