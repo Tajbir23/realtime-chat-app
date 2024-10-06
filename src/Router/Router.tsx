@@ -8,6 +8,7 @@ import CreateMyDay from "../pages/MyDay/CreateMyDay";
 import Day from "../pages/MyDay/Day";
 import MyDay from "../pages/MyDay/MyDay";
 import SharedMyDay from "../component/Chat/myDay/SharedMyDay";
+import Notification from "../component/notification/Notification";
 
 const router = createBrowserRouter([
     {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
             {
                 path: "my_day",
                 element: <MyDay />
+            },
+            {
+                path: "notification",
+                element: <Notification />
             }
         ]
     },

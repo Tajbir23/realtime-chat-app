@@ -11,6 +11,7 @@ import allUsers from "../../redux/thunks/allUserThunks";
 import { AppDispatch } from "../../redux/app/store";
 import Friends from "./friends/Friends";
 import MyDayButton from "./myDay/MyDayButton";
+import { FaBell } from "react-icons/fa";
 
 
 // const socket = io(`${import.meta.env.VITE_API}`);
@@ -161,17 +162,19 @@ useEffect(() => {
       >
         <div className="h-full flex flex-col px-3 bg-gray-50">
           <div className="flex justify-between items-center p-2 fixed overflow-hidden w-full">
-            <div className="flex items-center gap-4">
-              <img
-                onClick={() => setVisibleMyDayButton(!visibleMyDayButton)}
-                className="h-8 w-8 rounded-full border-blue-900 border-[4px] cursor-pointer"
-                src={user?.photoUrl}
-                alt="image not found"
-              />
-              <div>
-                <h1 className="text-lg font-bold">{user?.name}</h1>
+            <div className="flex items-center justify-between mt-4 gap-4 w-[95%]">
+              <div className="flex items-center gap-4">
+                <img
+                  onClick={() => setVisibleMyDayButton(!visibleMyDayButton)}
+                  className="h-8 w-8 rounded-full border-blue-900 border-[4px] cursor-pointer"
+                  src={user?.photoUrl}
+                  alt="image not found"
+                />
+                <div>
+                  <h1 className="text-lg font-bold">{user?.name}</h1>
+                </div>
               </div>
-              
+              <NavLink to="/notification" onClick={() => dispatch(toggle())}><FaBell className="text-2xl cursor-pointer" /></NavLink>
               
             </div>
             <div

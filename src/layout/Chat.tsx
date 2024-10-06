@@ -6,6 +6,7 @@ import Aos from "aos";
 import 'aos/dist/aos.css';
 import { useEffect } from "react";
 import { socket } from "../hooks/useSocket";
+import toast from "react-hot-toast";
 // import Video from "../component/Chat/call/Video";
 
 
@@ -27,6 +28,8 @@ const Chat = () => {
 
   useEffect(() => {
     socket.on('likeAndCommentNotification', (data) => {
+      console.log(data)
+      toast.success('You have a new notification')
       const notification = new Notification('like', {
         body: data?.message,
         icon: '/favicon.ico',
