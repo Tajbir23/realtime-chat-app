@@ -222,7 +222,7 @@ useEffect(() => {
             <li className="text-xl font-bold bg-gray-50">Users</li>
             {users?.map(chatUser => {
               return (
-                <li key={chatUser._id} className={`${chatUser.email === user.email ? "hidden" : "block"}`}>
+                <li key={chatUser._id} className={`${chatUser?.email === user?.email ? "hidden" : "block"}`}>
                   <NavLink
                     onClick={() => dispatch(toggle())}
                     to={`/chat/${chatUser._id}`}

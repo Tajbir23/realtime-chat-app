@@ -6,6 +6,7 @@ import Aos from "aos";
 import 'aos/dist/aos.css';
 import { useEffect } from "react";
 import { socket } from "../hooks/useSocket";
+// import Video from "../component/Chat/call/Video";
 
 
 const Chat = () => {
@@ -44,6 +45,7 @@ const Chat = () => {
     <div className="flex gap-1">
         <Aside />
         <Outlet />
+        {/* <Video /> */}
     </div>
   )
 }
