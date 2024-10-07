@@ -6,6 +6,7 @@ import messageReducer from '../features/message/messageSlice';
 import allUsersReducer from '../features/user/allUsersSlice';
 import friendsReducer from '../features/user/friendsSlice';
 import totalLikeCommentReducer from '../features/likeAndComment/totalLikeCommentSlice';
+import notificationReducer from '../features/notification/notificationSlice';
 
 
 const store = configureStore({
@@ -15,7 +16,8 @@ const store = configureStore({
     message: messageReducer,
     allUsers: allUsersReducer,
     friends: friendsReducer,
-    totalLikeComment: totalLikeCommentReducer
+    totalLikeComment: totalLikeCommentReducer,
+    notification: notificationReducer
   },
 });
 

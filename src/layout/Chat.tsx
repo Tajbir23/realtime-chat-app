@@ -7,10 +7,13 @@ import 'aos/dist/aos.css';
 import { useEffect } from "react";
 import { socket } from "../hooks/useSocket";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { addNewNotification, incrementNotificationCount } from "../redux/features/notification/notificationSlice";
 // import Video from "../component/Chat/call/Video";
 
 
 const Chat = () => {
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   useEffect(() => {
     Aos.init({
@@ -27,8 +30,11 @@ const Chat = () => {
   },[])
 
   useEffect(() => {
+    
     socket.on('likeAndCommentNotification', (data) => {
-      console.log(data)
+
+      dispatch(incrementNotificationCount())
+      dispatch(addNewNotification(data?.newNotification))
       toast.success('You have a new notification')
       const notification = new Notification('like', {
         body: data?.message,
@@ -42,7 +48,7 @@ const Chat = () => {
     return () => {
       socket.off('likeAndCommentNotification')
     }
-  },[])
+  },[dispatch, navigate])
 
   return (
     <div className="flex gap-1">

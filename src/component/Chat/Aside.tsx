@@ -11,7 +11,9 @@ import allUsers from "../../redux/thunks/allUserThunks";
 import { AppDispatch } from "../../redux/app/store";
 import Friends from "./friends/Friends";
 import MyDayButton from "./myDay/MyDayButton";
-import { FaBell } from "react-icons/fa";
+import unreadNotifications from "../../redux/thunks/unreadNotifiactionCountThunk";
+import notificationState from "../../redux/typeCheck/notificationState";
+import { CiBellOn } from "react-icons/ci";
 
 
 // const socket = io(`${import.meta.env.VITE_API}`);
@@ -21,6 +23,7 @@ const Aside = () => {
     (state: { user: { user: userTypeCheck } }) => state.user.user
   );
   const { users, page, hasMore, isLoading } = useSelector((state: { allUsers: allUsersState }) => state.allUsers);
+  const unreadNotificationCount = useSelector((state : {notification: notificationState}) => state.notification)
   const isOpen = useSelector((state: ToggleStateCheck) => state.toggle.isOpen);
   const dispatch = useDispatch<AppDispatch>();
   const userListRef = useRef<HTMLUListElement>(null);
@@ -34,7 +37,10 @@ const Aside = () => {
 
   useEffect(() => {
     dispatch(allUsers(1))
+    dispatch(unreadNotifications())
   }, [dispatch]);
+
+  console.log("notification",unreadNotificationCount)
 
   useEffect(() => {
     socket.on("users", (user: userTypeCheck) => {
@@ -174,7 +180,10 @@ useEffect(() => {
                   <h1 className="text-lg font-bold">{user?.name}</h1>
                 </div>
               </div>
-              <NavLink to="/notification" onClick={() => dispatch(toggle())}><FaBell className="text-2xl cursor-pointer" /></NavLink>
+              <div>
+                <NavLink to="/notification" onClick={() => dispatch(toggle())}><CiBellOn className="text-2xl cursor-pointer" /></NavLink>
+                {unreadNotificationCount.totalNotifications > 0 && <span className=" absolute bottom-3 size-2 bg-red-800 rounded-full"></span>}
+              </div>
               
             </div>
             <div
