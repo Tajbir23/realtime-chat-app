@@ -16,7 +16,7 @@ const Notification = () => {
   const notificationListRef = useRef<HTMLDivElement>(null); // Ref for the notification list container
 
   useEffect(() => {
-    dispatch(notificationThunk({ page: 0, limit: 10 }));
+    dispatch(notificationThunk({ page: 0, limit: 13 }));
     dispatch(unreadNotifications());
   }, [dispatch]);
 

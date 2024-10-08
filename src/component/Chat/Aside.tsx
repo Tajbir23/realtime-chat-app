@@ -40,7 +40,6 @@ const Aside = () => {
     dispatch(unreadNotifications())
   }, [dispatch]);
 
-  console.log("notification",unreadNotificationCount)
 
   useEffect(() => {
     socket.on("users", (user: userTypeCheck) => {
