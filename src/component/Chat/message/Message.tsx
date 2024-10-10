@@ -1,6 +1,8 @@
+
 import message from "../../../redux/typeCheck/message"
 import userTypeCheck from "../../../redux/typeCheck/user"
 import Emoji from "../emoji/Emoji"
+import MessageOptions from "./MessageOptions"
 
 
 const Message = ({reverseMessage, user, myInfo}: {reverseMessage: message[], user: userTypeCheck, myInfo: userTypeCheck}) => {
@@ -21,19 +23,21 @@ const Message = ({reverseMessage, user, myInfo}: {reverseMessage: message[], use
                     : "justify-start"
                 }`}
               >
+                {msg.senderUsername === myInfo.username && <MessageOptions msg={msg} user={user} myInfo={myInfo} />}
                 <div className="relative">
-                <div
-                  className={`p-3 rounded-lg max-w-xs ${
-                    msg.senderUsername === myInfo.username
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-300 text-gray-900"
-                  }`}
-                >
-                  {msg.message}
+                    <div
+                    className={`p-3 rounded-lg max-w-xs ${
+                        msg.senderUsername === myInfo.username
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-300 text-gray-900"
+                    }`}
+                    >
+                    {msg.message}
+                    </div>
+                    <div className={`${msg.senderUsername === myInfo.username ? 'absolute right-0' : 'absolute left-0'}`}>{msg.emoji ? msg.emoji : ''}</div>
                 </div>
-                <div className={`${msg.senderUsername === myInfo.username ? 'absolute right-0' : 'absolute left-0'}`}>{msg.emoji ? msg.emoji : ''}</div>
-                </div>
-                {msg.receiverUsername === user?.username || msg.senderUsername === user?.username && <Emoji messageId={msg._id} receiverId={msg.receiverId === user._id ? msg.receiverId : msg.senderId} />}
+                    {msg.receiverUsername === user?.username || msg.senderUsername === user?.username && <Emoji messageId={msg._id} receiverId={msg.receiverId === user._id ? msg.receiverId : msg.senderId} />}
+                    {msg.senderUsername !== myInfo.username && <MessageOptions msg={msg} user={user} myInfo={myInfo} />}
               </div>
               </>
             ))}

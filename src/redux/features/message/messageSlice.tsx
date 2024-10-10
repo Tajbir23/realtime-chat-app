@@ -46,6 +46,17 @@ const messageSlice = createSlice({
             //         msg.receiverId = receiverId
             //     }
             // })
+        },
+        deleteMessage: (state, action) => {
+            const _id = action.payload
+            state.messages = state.messages.filter(msg => msg._id !== _id)
+        },
+        updateMessage: (state, action) => {
+            const {_id, message} = action.payload
+            const messageToUpdate = state.messages.find(msg => msg._id === _id)
+            if(messageToUpdate){
+                messageToUpdate.message = message
+            }
         }
     },
     extraReducers: (builder) => {
@@ -73,6 +84,6 @@ const messageSlice = createSlice({
     }
 })
 
-export const { incrementPage, adMessage, updateEmoji } = messageSlice.actions
+export const { incrementPage, adMessage, updateEmoji, deleteMessage, updateMessage } = messageSlice.actions
 
 export default messageSlice.reducer

@@ -1,3 +1,5 @@
+import userTypeCheck from "./user";
+
 interface message {
     _id: string;
     chatId: string;
@@ -12,6 +14,7 @@ interface message {
     receiverPhotoUrl: string;
     message: string;
     emoji: string;
+    deletedFor: userTypeCheck
 }
 
 export default message;

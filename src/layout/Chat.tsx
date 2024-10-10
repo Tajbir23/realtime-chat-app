@@ -9,6 +9,7 @@ import { socket } from "../hooks/useSocket";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { addNewNotification, incrementNotificationCount } from "../redux/features/notification/notificationSlice";
+import { updateMessage } from "../redux/features/message/messageSlice";
 // import Video from "../component/Chat/call/Video";
 
 
@@ -50,6 +51,16 @@ const Chat = () => {
     }
   },[dispatch, navigate])
 
+  useEffect(() => {
+    socket.on('unsentMessage', (message) => {
+      dispatch(updateMessage(message))
+    })
+    return () => {
+      socket.off('unsentMessage')
+    }
+  },[dispatch])
+
+  
   return (
     <div className="flex gap-1">
         <Aside />
