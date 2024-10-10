@@ -16,11 +16,11 @@ import BlockButton from "./BlockButton";
 import friends from "../../redux/typeCheck/friends";
 import SubmitMessage from "./SubmitMessage";
 import message from "../../redux/typeCheck/message";
-import Emoji from "./emoji/Emoji";
+import Message from "./message/Message";
 
 const ChatLayout: React.FC = () => {
   const { id } = useParams();
-  const [user, setUser] = useState<userTypeCheck>();
+  const [user, setUser] = useState<userTypeCheck | undefined>();
   const dispatch = useDispatch<AppDispatch>();
   const { messages, page, hasMore, isLoading } = useSelector(
     (state: { message: MessageState }) => state.message
@@ -287,37 +287,8 @@ const ChatLayout: React.FC = () => {
             ref={chatBoxRef}
             className="flex-grow p-4 overflow-y-auto w-full"
           >
-            {reverseMessage.map((msg, index) => (
-              <>
-              <div
-                key={index}
-                className={`mb-4 flex group ${
-                  msg.receiverUsername === user?.username ||
-                  msg.senderUsername === user?.username
-                    ? "block"
-                    : "hidden"
-                } ${
-                  msg.senderUsername === myInfo.username
-                    ? "justify-end"
-                    : "justify-start"
-                }`}
-              >
-                <div className="relative">
-                <div
-                  className={`p-3 rounded-lg max-w-xs ${
-                    msg.senderUsername === myInfo.username
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-300 text-gray-900"
-                  }`}
-                >
-                  {msg.message}
-                </div>
-                <div className={`${msg.senderUsername === myInfo.username ? 'absolute right-0' : 'absolute left-0'}`}>{msg.emoji ? msg.emoji : ''}</div>
-                </div>
-                {msg.receiverUsername === user?.username || msg.senderUsername === user?.username && <Emoji messageId={msg._id} receiverId={msg.receiverId === user._id ? msg.receiverId : msg.senderId} />}
-              </div>
-              </>
-            ))}
+            {user && <Message reverseMessage={reverseMessage} user={user} myInfo={myInfo} />}
+
             <div ref={scrollRef} />
           </div>
           {upcomingMessage && countDown !== 0 && upcomingMessage.senderId === id && (
@@ -337,4 +308,5 @@ const ChatLayout: React.FC = () => {
     </div>
   );
 };
+
 export default ChatLayout;
