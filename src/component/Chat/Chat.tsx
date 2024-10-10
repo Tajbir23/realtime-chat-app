@@ -7,6 +7,7 @@ import MessageState from "../../redux/typeCheck/messageState";
 import {
   adMessage,
   incrementPage,
+  updateEmoji,
 } from "../../redux/features/message/messageSlice";
 import messageThunk from "../../redux/thunks/messageThunks";
 import { socket } from "../../hooks/useSocket";
@@ -110,6 +111,14 @@ const ChatLayout: React.FC = () => {
       socket.off("message", handleIncomingMessage);
     };
   }, [dispatch, myInfo?.username]);
+
+
+// update emoji in message
+  socket.on('emojiUpdate', (message) => {
+    console.log("emoji",message)
+    dispatch(updateEmoji(message))
+  })
+
 
   useEffect(() => {
     if (page === 1 && chatBoxRef.current) {
@@ -256,6 +265,8 @@ const ChatLayout: React.FC = () => {
 
   const friend = friends.friends.find((f) => f.senderId?._id === id || f.receiverId?._id === id)
 
+  console.log(reverseMessage)
+
   return (
     <div className="sm:ml-80 w-full">
       <div className="h-[calc(100vh-60px)] sm:h-screen flex w-full">
@@ -277,6 +288,7 @@ const ChatLayout: React.FC = () => {
             className="flex-grow p-4 overflow-y-auto w-full"
           >
             {reverseMessage.map((msg, index) => (
+              <>
               <div
                 key={index}
                 className={`mb-4 flex group ${
@@ -290,6 +302,7 @@ const ChatLayout: React.FC = () => {
                     : "justify-start"
                 }`}
               >
+                <div className="relative">
                 <div
                   className={`p-3 rounded-lg max-w-xs ${
                     msg.senderUsername === myInfo.username
@@ -299,8 +312,11 @@ const ChatLayout: React.FC = () => {
                 >
                   {msg.message}
                 </div>
-                {msg.receiverUsername === user?.username || msg.senderUsername === user?.username && <Emoji messageId={msg._id} />}
+                <div className={`${msg.senderUsername === myInfo.username ? 'absolute right-0' : 'absolute left-0'}`}>{msg.emoji ? msg.emoji : ''}</div>
+                </div>
+                {msg.receiverUsername === user?.username || msg.senderUsername === user?.username && <Emoji messageId={msg._id} receiverId={msg.receiverId === user._id ? msg.receiverId : msg.senderId} />}
               </div>
+              </>
             ))}
             <div ref={scrollRef} />
           </div>

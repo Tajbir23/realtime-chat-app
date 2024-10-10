@@ -11,6 +11,7 @@ interface message {
     receiverEmail: string;
     receiverPhotoUrl: string;
     message: string;
+    emoji: string;
 }
 
 export default message;

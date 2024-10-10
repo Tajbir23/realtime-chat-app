@@ -1,18 +1,44 @@
 import { useState, useRef, useEffect } from "react"
 import { MdOutlineEmojiEmotions } from "react-icons/md"
+import { useDispatch } from "react-redux"
+import { updateEmoji } from "../../../redux/features/message/messageSlice"
 
 const emojis = ["😀", "😂", "😍", "🤔", "😎", "👍", "🎉", "🚀", "💡", "🌈"]
 
-export default function Emoji({ messageId }: { messageId: string }) {
+export default function Emoji({ messageId, receiverId }: { messageId: string, receiverId: string }) {
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null)
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const dispatch = useDispatch()
 
-  const handleEmojiSelect = (emoji: string) => {
+  const handleEmojiSelect = async(emoji: string) => {
     setSelectedEmoji(emoji)
     setIsOpen(false)
     console.log(`Emoji ${emoji} selected for message ${messageId}`)
     // Here you would typically send this information to your server
+    try {
+        const res = await fetch(`${import.meta.env.VITE_API}/api/emoji`,{
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                messageId,
+                emoji,
+                receiverId
+            }),
+        })
+        if (!res.ok) {
+            throw new Error("Failed to send emoji")
+        }
+        const data = await res.json()
+        console.log(data)
+        dispatch(updateEmoji(data))
+        setSelectedEmoji(null)
+    } catch (error) {
+        console.error(error)
+    }
   }
 
   useEffect(() => {
