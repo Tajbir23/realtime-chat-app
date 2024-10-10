@@ -15,6 +15,7 @@ import BlockButton from "./BlockButton";
 import friends from "../../redux/typeCheck/friends";
 import SubmitMessage from "./SubmitMessage";
 import message from "../../redux/typeCheck/message";
+import Emoji from "./emoji/Emoji";
 
 const ChatLayout: React.FC = () => {
   const { id } = useParams();
@@ -278,7 +279,7 @@ const ChatLayout: React.FC = () => {
             {reverseMessage.map((msg, index) => (
               <div
                 key={index}
-                className={`mb-4 flex ${
+                className={`mb-4 flex group ${
                   msg.receiverUsername === user?.username ||
                   msg.senderUsername === user?.username
                     ? "block"
@@ -298,6 +299,7 @@ const ChatLayout: React.FC = () => {
                 >
                   {msg.message}
                 </div>
+                {msg.receiverUsername === user?.username || msg.senderUsername === user?.username && <Emoji messageId={msg._id} />}
               </div>
             ))}
             <div ref={scrollRef} />
