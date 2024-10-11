@@ -9,7 +9,9 @@ interface friends {
   updatedAt: string;
   _id: string;
   isBlock: boolean;
-  blockSender: string
+  blockSender: string;
+  theme: string;
+  themeUpdateBy: string;
 }
 
 export default friends;

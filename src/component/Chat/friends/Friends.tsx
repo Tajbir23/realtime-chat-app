@@ -24,7 +24,7 @@ const Friends: React.FC = () => {
     (state: { user: { user: userTypeCheck } }) => state.user.user
   );
 
-  
+  console.log(friends.friends)
   const friendListRef = useRef<HTMLUListElement>(null)
 
   const dispatch = useDispatch<AppDispatch>();

@@ -12,11 +12,11 @@ import {
 import messageThunk from "../../redux/thunks/messageThunks";
 import { socket } from "../../hooks/useSocket";
 import upcomingMessageType from "../../redux/typeCheck/upcomingMessageType";
-import BlockButton from "./BlockButton";
 import friends from "../../redux/typeCheck/friends";
 import SubmitMessage from "./SubmitMessage";
 import message from "../../redux/typeCheck/message";
 import Message from "./message/Message";
+import MessageProfileOptions from "./message/MessageProfileOptions";
 
 const ChatLayout: React.FC = () => {
   const { id } = useParams();
@@ -265,18 +265,15 @@ const ChatLayout: React.FC = () => {
 
   const friend = friends.friends.find((f) => f.senderId?._id === id || f.receiverId?._id === id)
 
-  console.log(reverseMessage)
+  console.log("friend", friend)
 
   return (
     <div className="sm:ml-80 w-full">
       <div className="h-[calc(100vh-60px)] sm:h-screen flex w-full">
         {/* Main Chat Area */}
-        <div className="flex-grow flex flex-col bg-gray-100 w-full">
+        <div className={`flex-grow flex flex-col ${friend?.theme ? friend.theme : 'bg-gray-100'} w-full`}>
           {/* Chat Header */}
-          <div data-aos="fade-down" className="p-4 bg-white shadow-md flex gap-5 items-center justify-between">
-            <h2 className="text-lg font-bold">Chat with {user?.name}</h2>
-            <BlockButton id={id ?? "default-id"} myInfo={myInfo} />
-          </div>
+          {user && <MessageProfileOptions id={friend?._id || ""} user={user} myInfo={myInfo} />}
 
           {isLoading && (
             <h1 className="text-4xl font-bold text-center">Loading</h1>
