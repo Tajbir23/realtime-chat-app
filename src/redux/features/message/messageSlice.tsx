@@ -40,22 +40,18 @@ const messageSlice = createSlice({
                 message.emoji = emoji
                 message.receiverId = receiverId
             }
-            // state.messages.forEach(msg => {
-            //     if(msg._id === _id){
-            //         msg.emoji = emoji
-            //         msg.receiverId = receiverId
-            //     }
-            // })
         },
         deleteMessage: (state, action) => {
             const _id = action.payload
             state.messages = state.messages.filter(msg => msg._id !== _id)
         },
         updateMessage: (state, action) => {
-            const {_id, message} = action.payload
+            const {_id, message, unsent, edited} = action.payload
             const messageToUpdate = state.messages.find(msg => msg._id === _id)
             if(messageToUpdate){
                 messageToUpdate.message = message
+                messageToUpdate.unsent = unsent
+                messageToUpdate.edited = edited
             }
         }
     },

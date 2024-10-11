@@ -17,6 +17,8 @@ A real-time chat application built using React.js, Redux, TypeScript, Node.js, E
 - **Message delete:** Message delete for me
 - **Message unsent:** Message unsent for everyone
 - **Message edit:** Message edit for everyone
+- **Unsent message can't unsent:** unsent message can't unsent again but unsent message can delete for me
+- **One time edit message:** One time edit message for everyone
 
 ## Technologies
 

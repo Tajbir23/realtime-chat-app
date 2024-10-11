@@ -4,11 +4,13 @@ import userTypeCheck from "../../../redux/typeCheck/user";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { deleteMessage, updateMessage } from "../../../redux/features/message/messageSlice";
+import MessageEditModal from "./MessageEditModal";
 
 const MessageOptions = ({ msg, user, myInfo }: { msg: message, user: userTypeCheck, myInfo: userTypeCheck }) => {
     const [isOpen, setIsOpen] = useState(false)
     const optionRef = useRef(null)
     const dispatch = useDispatch()
+    const [isEdit, setIsEdit] = useState(false)
 
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent | TouchEvent | KeyboardEvent) => {
@@ -55,6 +57,8 @@ const MessageOptions = ({ msg, user, myInfo }: { msg: message, user: userTypeChe
         }
 
     }
+
+    console.log("update",msg)
   return (
     <div className="relative">
       {/* Vertical Dots Icon */}
@@ -72,17 +76,18 @@ const MessageOptions = ({ msg, user, myInfo }: { msg: message, user: userTypeChe
         <button onClick={() => handleDelete('deleteForMe')} className="py-2 px-4 hover:bg-gray-100 rounded-md text-sm text-gray-800">
           Delete for me
         </button>
-        {(msg.senderId === myInfo._id) && (
+        {(msg.senderId === myInfo._id && !msg.unsent) && (
           <>
             <button onClick={() => handleDelete('unsent')} className="py-2 px-4 hover:bg-gray-100 rounded-md text-sm text-gray-800">
               Unsent
             </button>
-            <button className="py-2 px-4 hover:bg-gray-100 rounded-md text-sm text-gray-800">
+            {!msg.edited && <button onClick={() => setIsEdit(true)} className="py-2 px-4 hover:bg-gray-100 rounded-md text-sm text-gray-800">
               Edit
-            </button>
+            </button>}
           </>
         )}
       </div>}
+      {isEdit && <MessageEditModal msg={msg} setIsEdit={setIsEdit} />}
     </div>
   );
 };

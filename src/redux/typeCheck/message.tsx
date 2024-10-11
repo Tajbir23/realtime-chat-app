@@ -13,6 +13,8 @@ interface message {
     receiverEmail: string;
     receiverPhotoUrl: string;
     message: string;
+    edited: boolean;
+    unsent: boolean;
     emoji: string;
     deletedFor: userTypeCheck
 }

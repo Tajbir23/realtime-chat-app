@@ -9,7 +9,7 @@ const initialState = {
         like: false,
     } as totalLikeCommentType,
     isLoading: false,
-    error: Error,
+    error: "",
 }
 
 const totalLikeCommentSlice = createSlice({
@@ -29,20 +29,20 @@ const totalLikeCommentSlice = createSlice({
     extraReducers: (builder) => {
         builder
         .addCase(totalLikeCommentThunk.pending, (state) => {
-            state.error = null as unknown as ErrorConstructor
+            state.error = ""
             state.isLoading = true
         })
         .addCase(totalLikeCommentThunk.fulfilled, (state, action) => {
             state.isLoading = false
-            state.error = null as unknown as ErrorConstructor
+            state.error = ""
             state.totalLikeComment.totalLike = action.payload.totalLike
             state.totalLikeComment.totalComment = action.payload.totalComment
             state.totalLikeComment.like = action.payload.myLike
             state.totalLikeComment.totalShare = action.payload.totalShare ? action.payload.totalShare : 0
         })
-        .addCase(totalLikeCommentThunk.rejected, (state, action) => {
+        .addCase(totalLikeCommentThunk.rejected, (state) => {
             state.isLoading = false
-            state.error = action.error as ErrorConstructor
+            state.error = "Something went wrong"
         })
     },
 })

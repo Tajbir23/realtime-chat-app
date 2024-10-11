@@ -52,11 +52,11 @@ const Chat = () => {
   },[dispatch, navigate])
 
   useEffect(() => {
-    socket.on('unsentMessage', (message) => {
+    socket.on('updateMessage', (message) => {
       dispatch(updateMessage(message))
     })
     return () => {
-      socket.off('unsentMessage')
+      socket.off('updateMessage')
     }
   },[dispatch])
 
