@@ -34,7 +34,7 @@ const Message = ({reverseMessage, user, myInfo}: {reverseMessage: message[], use
                     >
                     {msg.message}
                     </div>
-                    <div className={`${msg.senderUsername === myInfo.username ? 'absolute right-0' : 'absolute left-0'}`}>{msg.emoji ? msg.emoji : ''}</div>
+                    <div className={`${msg.senderUsername === myInfo.username ? 'absolute right-0 -bottom-2 z-30' : 'absolute left-0 -bottom-2 z-30'}`}>{msg.emoji ? msg.emoji : ''}</div>
                 </div>
                     {msg.receiverUsername === user?.username || msg.senderUsername === user?.username && <Emoji messageId={msg._id} receiverId={msg.receiverId === user._id ? msg.receiverId : msg.senderId} />}
                     {msg.senderUsername !== myInfo.username && <MessageOptions msg={msg} user={user} myInfo={myInfo} />}

@@ -10,10 +10,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import allUsers from "../../redux/thunks/allUserThunks";
 import { AppDispatch } from "../../redux/app/store";
 import Friends from "./friends/Friends";
-import MyDayButton from "./myDay/MyDayButton";
 import unreadNotifications from "../../redux/thunks/unreadNotifiactionCountThunk";
 import notificationState from "../../redux/typeCheck/notificationState";
 import { CiBellOn } from "react-icons/ci";
+import ProfileOptions from "./profile/ProfileOptions";
 
 
 // const socket = io(`${import.meta.env.VITE_API}`);
@@ -225,7 +225,7 @@ useEffect(() => {
             ))}
           </ul>}
           {visibleMyDayButton && <div ref={myDayButtonRef} className="absolute left-5 top-14 z-50">
-            <MyDayButton />
+            <ProfileOptions myInfo={user} />
           </div>}
             <Friends />
 

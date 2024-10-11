@@ -8,6 +8,7 @@ import { BiHeart } from "react-icons/bi";
 import { FiMessageCircle } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { BsArrowLeft } from "react-icons/bs";
+import NotificationLoading from "./NotificationLoading";
 
 const Notification = () => {
   const notifications = useSelector((state: { notification: notificationState }) => state.notification);
@@ -71,6 +72,20 @@ const Notification = () => {
     };
   }, [handleScroll]);
 
+  if (notifications.isLoading) {
+    return <div className="bg-gray-100 md:ml-80 w-full">
+      <NotificationLoading />
+      <NotificationLoading />
+      <NotificationLoading />
+      <NotificationLoading />
+      <NotificationLoading />
+      <NotificationLoading />
+      <NotificationLoading />
+      <NotificationLoading />
+      <NotificationLoading />
+    </div>
+  }
+  
   return (
     <div className="bg-gray-100 md:ml-80 w-full">
       <header className="bg-white shadow w-full">
@@ -127,5 +142,4 @@ const Notification = () => {
     </div>
   );
 };
-
 export default Notification;
