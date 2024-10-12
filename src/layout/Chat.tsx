@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { addNewNotification, incrementNotificationCount } from "../redux/features/notification/notificationSlice";
 import { updateMessage } from "../redux/features/message/messageSlice";
+import { updateTheme } from "../redux/features/user/friendsSlice";
 // import Video from "../component/Chat/call/Video";
 
 
@@ -59,7 +60,15 @@ const Chat = () => {
       socket.off('updateMessage')
     }
   },[dispatch])
-
+  
+  useEffect(() => {
+    socket.on('themeUpdate', (data) => {
+      dispatch(updateTheme(data))
+    })
+    return () => {
+      socket.off('themeUpdate')
+    }
+  },[dispatch])
   
   return (
     <div className="flex gap-1">

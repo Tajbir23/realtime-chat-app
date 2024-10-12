@@ -69,12 +69,12 @@ const MessageProfileOptions = ({
                 <ThemeSelector setIsThemeOpen={setIsThemeOpen} chatId={chatId} />
                </div>}
             </button>
-            <Link
+            {user.isActiveMyDay && <Link
               to={`/day/${user?._id}`}
               className="w-full p-2 hover:bg-white rounded-lg text-center"
             >
               See Day
-            </Link>
+            </Link>}
           </div>
         )}
       
