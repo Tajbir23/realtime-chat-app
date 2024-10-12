@@ -5,13 +5,15 @@ import { Link } from "react-router-dom";
 import ThemeSelector from "./Theme/ThemeSelector";
 
 const MessageProfileOptions = ({
-  id,
+  chatId,
   myInfo,
   user,
+  id
 }: {
-  id: string;
+  chatId: string;
   myInfo: userTypeCheck;
   user: userTypeCheck;
+  id: string
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isThemeOpen, setIsThemeOpen] = useState(false)
@@ -64,7 +66,7 @@ const MessageProfileOptions = ({
             <button onClick={() => setIsThemeOpen(true)} className="relative w-full p-2 hover:bg-white rounded-lg">
               <span>Theme</span>
               {isThemeOpen && <div className="absolute -right-32 rounded-lg z-50">
-                <ThemeSelector setIsThemeOpen={setIsThemeOpen} chatId={id} />
+                <ThemeSelector setIsThemeOpen={setIsThemeOpen} chatId={chatId} />
                </div>}
             </button>
             <Link
@@ -75,8 +77,8 @@ const MessageProfileOptions = ({
             </Link>
           </div>
         )}
-
-        <BlockButton id={id ?? "default-id"} myInfo={myInfo} />
+      
+        <BlockButton id={id} myInfo={myInfo} />
       </div>
     </>
   );

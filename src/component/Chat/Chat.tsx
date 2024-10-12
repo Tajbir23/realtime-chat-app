@@ -265,7 +265,6 @@ const ChatLayout: React.FC = () => {
 
   const friend = friends.friends.find((f) => f.senderId?._id === id || f.receiverId?._id === id)
 
-  console.log("friend", friend)
 
   return (
     <div className="sm:ml-80 w-full">
@@ -273,7 +272,7 @@ const ChatLayout: React.FC = () => {
         {/* Main Chat Area */}
         <div className={`flex-grow flex flex-col ${friend?.theme ? friend.theme : 'bg-gray-100'} w-full`}>
           {/* Chat Header */}
-          {user && <MessageProfileOptions id={friend?._id || ""} user={user} myInfo={myInfo} />}
+          {user && <MessageProfileOptions chatId={friend?._id || ""} user={user} myInfo={myInfo} id={id || ""} />}
 
           {isLoading && (
             <h1 className="text-4xl font-bold text-center">Loading</h1>

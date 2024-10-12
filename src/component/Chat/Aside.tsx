@@ -140,7 +140,7 @@ useEffect(() => {
         data-drawer-toggle="default-sidebar"
         aria-controls="default-sidebar"
         type="button"
-        className="inline-flex fixed right-0 items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+        className="inline-flex fixed z-10 right-0 items-center p-2 mt-3 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
       >
         <span className="sr-only">Open sidebar</span>
         <svg
@@ -189,6 +189,7 @@ useEffect(() => {
               className="cursor-pointer inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
               onClick={() => dispatch(toggle())}
             >
+              
               <span className="sr-only">Open sidebar</span>
               <svg
                 className="w-6 h-6"
@@ -224,7 +225,7 @@ useEffect(() => {
               </li>
             ))}
           </ul>}
-          {visibleMyDayButton && <div ref={myDayButtonRef} className="absolute left-5 top-14 z-50">
+          {visibleMyDayButton && <div ref={myDayButtonRef} className="absolute left-5 top-14 z-30">
             <ProfileOptions myInfo={user} />
           </div>}
             <Friends />
