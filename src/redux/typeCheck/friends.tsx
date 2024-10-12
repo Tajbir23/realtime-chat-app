@@ -12,6 +12,7 @@ interface friends {
   blockSender: string;
   theme: string;
   themeUpdateBy: string;
+  themeType: string;
 }
 
 export default friends;

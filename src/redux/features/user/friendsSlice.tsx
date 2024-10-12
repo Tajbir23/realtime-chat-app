@@ -20,13 +20,15 @@ const friendsSlice = createSlice({
         },
         replaceFriends: (state, action) => {
             const updateFriends = action.payload as friend
-            const index = state.friends.findIndex(friend => friend._id === updateFriends._id)
+            state.friends = state.friends.filter(friend => friend._id !== updateFriends._id)
+            state.friends.unshift(updateFriends)
+            // const index = state.friends.findIndex(friend => friend._id === updateFriends._id)
 
-            if(index > -1){
-                // state.friends[index] = updateFriends
-                state.friends.splice(index, 1)
-                state.friends.unshift(updateFriends)
-            }
+            // if(index > -1){
+            //     // state.friends[index] = updateFriends
+            //     state.friends.splice(index, 1)
+            //     state.friends.unshift(updateFriends)
+            // }
         },
         updateFriendActiveStatus: (state, action) => {
             const updateFriend = action.payload as friend
@@ -37,12 +39,17 @@ const friendsSlice = createSlice({
             }
         },
         updateTheme: (state, action) => {
-            const {theme, themeUpdateBy, _id} = action.payload as friend
+            const {theme, themeUpdateBy, _id, themeType} = action.payload as friend
             const friend = state.friends.find(friend => friend._id === _id)
             if(friend){
                 friend.theme = theme
                 friend.themeUpdateBy = themeUpdateBy
+                friend.themeType = themeType
             }
+        },
+        deleteFriend: (state, action) => {
+            const _id = action.payload as string
+            state.friends = state.friends.filter(friend => friend._id !== _id)
         }
     },
     extraReducers: (builder) => {
@@ -65,6 +72,6 @@ const friendsSlice = createSlice({
     }
 })
 
-export const { incrementPage, replaceFriends, updateFriendActiveStatus, updateTheme} = friendsSlice.actions;
+export const { incrementPage, replaceFriends, updateFriendActiveStatus, updateTheme, deleteFriend} = friendsSlice.actions;
 
 export default friendsSlice.reducer;

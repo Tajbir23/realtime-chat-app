@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../../redux/app/store";
 import friendsThunk from "../../../redux/thunks/friendsThunks";
@@ -8,6 +8,8 @@ import { socket } from "../../../hooks/useSocket";
 import { replaceFriends, updateFriendActiveStatus } from "../../../redux/features/user/friendsSlice";
 import { toggle } from "../../../redux/features/toggle/toggleSlice";
 import userTypeCheck from "../../../redux/typeCheck/user";
+import { CiMenuKebab } from "react-icons/ci";
+import DeleteFriend from "./DeleteFriend";
 
 const Friends: React.FC = () => {
   const friends = useSelector(
@@ -20,6 +22,12 @@ const Friends: React.FC = () => {
       };
     }) => state.friends
   );
+
+  const [isDeleteOpen, setIsDeleteOpen] = useState({
+    open: false,
+    id: ''
+  });
+
   const me = useSelector(
     (state: { user: { user: userTypeCheck } }) => state.user.user
   );
@@ -98,7 +106,7 @@ const Friends: React.FC = () => {
         
         return (
           <>
-            <li>
+            <li className="flex items-center">
             <NavLink
               onClick={() => dispatch(toggle())}
               to={`/chat/${friend.receiverId?._id || friend.senderId?._id}`}
@@ -107,7 +115,7 @@ const Friends: React.FC = () => {
               {friend.senderId?.isActiveMyDay || friend.receiverId?.isActiveMyDay && friend.senderId?.myDayEndAt > Number(Date.now()) || friend.receiverId?.myDayEndAt > Number(Date.now()) ? <Link to={`/day/${friend.senderId?._id || friend.receiverId?._id}`}>
               <img
                 src={friend.receiverId?.photoUrl || friend.senderId?.photoUrl}
-                className="h-8 w-8 rounded-full ring-4 ring-blue-500"
+                className="h-8 w-8 ring-4 ring-blue-500 rounded-full"
                 alt="image not found"
               />
               </Link> : <img
@@ -139,6 +147,10 @@ const Friends: React.FC = () => {
                 </div>
               </div>
             </NavLink>
+            <div className="relative">
+              <CiMenuKebab onClick={() => setIsDeleteOpen({open: true, id: friend._id})} className="cursor-pointer" />
+              {isDeleteOpen.open && isDeleteOpen.id === friend._id && <DeleteFriend isDeleteOpen={isDeleteOpen} />}
+            </div>
             </li>
           </>
         );

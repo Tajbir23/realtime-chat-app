@@ -6,10 +6,10 @@ import { updateTheme } from '../../../../redux/features/user/friendsSlice';
 const themes = {
   white: '',
   reset: 'bg-gray-100',
-  default: 'bg-blue-500 text-white',
-  green: 'bg-green-500 text-white',
-  purple: 'bg-purple-500 text-white',
-  red: 'bg-red-500 text-white',
+  default: 'bg-blue-500',
+  green: 'bg-green-500',
+  purple: 'bg-purple-500',
+  red: 'bg-red-500',
 };
 
 const ThemeSelector = ({setIsThemeOpen, chatId}: {setIsThemeOpen: (isOpen: boolean) => void; chatId: string}) => {
@@ -36,6 +36,7 @@ const ThemeSelector = ({setIsThemeOpen, chatId}: {setIsThemeOpen: (isOpen: boole
   const handleThemeChange = async (theme: keyof typeof themes) => {
     // setSelectedTheme(theme);
     const setSelectedTheme = themes[theme];
+    
     try {
       const res = await fetch(`${import.meta.env.VITE_API}/api/chat/theme/${chatId}`,{
         method: 'PUT',
@@ -45,6 +46,7 @@ const ThemeSelector = ({setIsThemeOpen, chatId}: {setIsThemeOpen: (isOpen: boole
         },
         body: JSON.stringify({
           theme: setSelectedTheme,
+          themeType: theme
         }),
       })
       const data = await res.json()
