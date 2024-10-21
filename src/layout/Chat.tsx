@@ -7,7 +7,7 @@ import 'aos/dist/aos.css';
 import { useEffect } from "react";
 import { socket } from "../hooks/useSocket";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addNewNotification, incrementNotificationCount } from "../redux/features/notification/notificationSlice";
 import { deleteEncryptedMessage, updateMessage } from "../redux/features/message/messageSlice";
 import { updateFriend, updateTheme } from "../redux/features/user/friendsSlice";
@@ -17,6 +17,15 @@ import { updateFriend, updateTheme } from "../redux/features/user/friendsSlice";
 const Chat = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const userData = useSelector((state: { user: { isLoading: boolean; user: { error: string; email: string }, error: string; } }) => state.user)
+
+  useEffect(() => {
+    socket.emit('connected', userData.user)
+    return () => {
+      socket.off('connected')
+    }
+  },[userData.user])
+
   useEffect(() => {
     Aos.init({
       duration: 1000,
