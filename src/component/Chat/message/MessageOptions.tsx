@@ -43,7 +43,7 @@ const MessageOptions = ({ msg, user, myInfo }: { msg: message, user: userTypeChe
                 })
             })
             const data = await res.json()
-            console.log(data)
+            // console.log(data)
             if(res.ok && data){
                 if(type === "deleteForMe"){
                     dispatch(deleteMessage(msg._id))
@@ -58,7 +58,7 @@ const MessageOptions = ({ msg, user, myInfo }: { msg: message, user: userTypeChe
 
     }
 
-    console.log("update",msg)
+    // console.log("update",msg)
   return (
     <div className="relative">
       {/* Vertical Dots Icon */}

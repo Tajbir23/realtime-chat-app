@@ -36,17 +36,17 @@ const Video: React.FC = () => {
         const peerConnection = new RTCPeerConnection(iceServers);
         peerConnectionRef.current = peerConnection
 
-        console.log('added track', localStreamRef.current?.getTracks())
+        // console.log('added track', localStreamRef.current?.getTracks())
         localStreamRef.current?.getTracks().forEach(track => {
             peerConnection.addTrack(track, localStreamRef.current!);
             
         })
 
         peerConnection.onicecandidate = (event) => {
-            console.log(event)
+            // console.log(event)
             if(event.candidate){
                 socket.emit('ice-candidate', event.candidate)
-                console.log(event.candidate)
+                // console.log(event.candidate)
             }
         };
 

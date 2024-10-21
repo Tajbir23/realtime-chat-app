@@ -50,6 +50,16 @@ const friendsSlice = createSlice({
         deleteFriend: (state, action) => {
             const _id = action.payload as string
             state.friends = state.friends.filter(friend => friend._id !== _id)
+        },
+        updateFriend: (state, action) => {
+            const {_id, isEncrypted, publicKey} = action.payload as friend
+            const friend = state.friends.find(friend => friend._id === _id)
+            console.log("friend id",friend, _id)
+            if(friend){
+                friend.isEncrypted = isEncrypted
+                friend.publicKey = publicKey
+                
+            }
         }
     },
     extraReducers: (builder) => {
@@ -72,6 +82,6 @@ const friendsSlice = createSlice({
     }
 })
 
-export const { incrementPage, replaceFriends, updateFriendActiveStatus, updateTheme, deleteFriend} = friendsSlice.actions;
+export const { incrementPage, replaceFriends, updateFriendActiveStatus, updateTheme, deleteFriend, updateFriend} = friendsSlice.actions;
 
 export default friendsSlice.reducer;

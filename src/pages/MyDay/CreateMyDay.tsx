@@ -40,8 +40,8 @@ const CreateMyDay = () => {
                 toast.success("Your day has been posted")
                 setValue("")
             }
-            const data = await response.json();
-            console.log(data)
+            await response.json();
+            // console.log(data)
         } catch (error) {
             // Handle error
             console.error(error)

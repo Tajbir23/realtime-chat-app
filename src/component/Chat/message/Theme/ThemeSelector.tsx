@@ -50,7 +50,7 @@ const ThemeSelector = ({setIsThemeOpen, chatId}: {setIsThemeOpen: (isOpen: boole
         }),
       })
       const data = await res.json()
-      console.log(data)
+      // console.log(data)
       if(res.ok) {
         dispatch(updateTheme(data))
         setIsThemeOpen(false)

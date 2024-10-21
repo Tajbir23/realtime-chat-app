@@ -11,7 +11,7 @@ interface myDay {
 const SharedMyDay = () => {
     const {id} = useParams()
     const [data, setData] = useState<myDay>()
-    console.log(id)
+    // console.log(id)
     useEffect(() => {
         fetch(`${import.meta.env.VITE_API}/api/share/${id}`,{
             method: "GET",

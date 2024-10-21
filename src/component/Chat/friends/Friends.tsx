@@ -32,7 +32,7 @@ const Friends: React.FC = () => {
     (state: { user: { user: userTypeCheck } }) => state.user.user
   );
 
-  console.log(friends.friends)
+  // console.log(friends.friends)
   const friendListRef = useRef<HTMLUListElement>(null)
 
   const dispatch = useDispatch<AppDispatch>();
@@ -149,7 +149,7 @@ const Friends: React.FC = () => {
             </NavLink>
             <div className="relative">
               <CiMenuKebab onClick={() => setIsDeleteOpen({open: true, id: friend._id})} className="cursor-pointer" />
-              {isDeleteOpen.open && isDeleteOpen.id === friend._id && <DeleteFriend isDeleteOpen={isDeleteOpen} />}
+              {isDeleteOpen.open && isDeleteOpen.id === friend._id && <DeleteFriend isDeleteOpen={isDeleteOpen} setIsDeleteOpen={setIsDeleteOpen} />}
             </div>
             </li>
           </>

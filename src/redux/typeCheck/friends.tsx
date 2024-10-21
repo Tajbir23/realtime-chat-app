@@ -13,6 +13,8 @@ interface friends {
   theme: string;
   themeUpdateBy: string;
   themeType: string;
+  publicKey: string;
+  isEncrypted: boolean;
 }
 
 export default friends;

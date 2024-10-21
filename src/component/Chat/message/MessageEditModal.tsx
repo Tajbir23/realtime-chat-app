@@ -26,7 +26,7 @@ const MessageEditModal = ({ msg, setIsEdit,}: { msg: message; setIsEdit: React.D
       const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const message = (e.target as HTMLFormElement).editMessage.value;
-        console.log(message)
+        // console.log(message)
         try {
             const res = await fetch(`${import.meta.env.VITE_API}/api/message/edit/${msg._id}`,{
                 method: "PUT",
@@ -41,7 +41,7 @@ const MessageEditModal = ({ msg, setIsEdit,}: { msg: message; setIsEdit: React.D
             })
 
             const data = await res.json()
-            console.log(data)
+            // console.log(data)
             if (res.ok) {
                 
                 dispatch(updateMessage(data))

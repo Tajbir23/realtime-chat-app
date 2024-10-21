@@ -9,8 +9,8 @@ import { socket } from "../hooks/useSocket";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { addNewNotification, incrementNotificationCount } from "../redux/features/notification/notificationSlice";
-import { updateMessage } from "../redux/features/message/messageSlice";
-import { updateTheme } from "../redux/features/user/friendsSlice";
+import { deleteEncryptedMessage, updateMessage } from "../redux/features/message/messageSlice";
+import { updateFriend, updateTheme } from "../redux/features/user/friendsSlice";
 // import Video from "../component/Chat/call/Video";
 
 
@@ -67,6 +67,24 @@ const Chat = () => {
     })
     return () => {
       socket.off('themeUpdate')
+    }
+  },[dispatch])
+
+  useEffect(() => {
+    socket.on('privateKey', (data) => {
+      const privateKey = data.privateKey
+      const chatId = data._id
+      console.log(privateKey)
+      if(data.isEncrypted){
+        sessionStorage.setItem(chatId, privateKey)
+      }else{
+        sessionStorage.removeItem(chatId)
+        dispatch(deleteEncryptedMessage(chatId))
+      }
+      dispatch(updateFriend(data))
+    })
+    return () => {
+      socket.off('privateKey')
     }
   },[dispatch])
   

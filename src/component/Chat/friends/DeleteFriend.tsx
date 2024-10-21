@@ -1,9 +1,27 @@
 import { useDispatch } from "react-redux"
 import { deleteFriend } from "../../../redux/features/user/friendsSlice"
+import { useEffect, useRef } from "react"
 
+interface DeleteFriendProps {
+    isDeleteOpen: {open: boolean, id: string}
+    setIsDeleteOpen: React.Dispatch<React.SetStateAction<{open: boolean, id: string}>>
+}
 
-const DeleteFriend = ({isDeleteOpen}: {isDeleteOpen: {open: boolean, id: string}}) => {
+const DeleteFriend = ({isDeleteOpen, setIsDeleteOpen}: DeleteFriendProps) => {
     const dispatch = useDispatch()
+    const deleteRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if(deleteRef.current && !deleteRef.current.contains(e.target as Node)){
+                setIsDeleteOpen({open: false, id: ''})
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [deleteRef])
 
     const handleDeleteChat = async(e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
@@ -18,8 +36,8 @@ const DeleteFriend = ({isDeleteOpen}: {isDeleteOpen: {open: boolean, id: string}
                     chatId: isDeleteOpen.id
                 })
             })
-            const data = await res.json()
-            console.log(data)
+            await res.json()
+            // console.log(data)
             if(res.ok){
                 dispatch(deleteFriend(isDeleteOpen.id))
                 isDeleteOpen.open = false
@@ -31,7 +49,7 @@ const DeleteFriend = ({isDeleteOpen}: {isDeleteOpen: {open: boolean, id: string}
     }
   return (
     <div className="absolute z-50 right-0">
-        <button onClick={handleDeleteChat} className="p-2 rounded-lg bg-red-500 text-white hover:bg-red-400 w-full">
+        <button onClick={handleDeleteChat} ref={deleteRef} className="p-2 rounded-lg bg-red-500 text-white hover:bg-red-400 w-full">
           Delete
         </button>
       

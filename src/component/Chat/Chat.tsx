@@ -17,6 +17,7 @@ import SubmitMessage from "./SubmitMessage";
 import message from "../../redux/typeCheck/message";
 import Message from "./message/Message";
 import MessageProfileOptions from "./message/MessageProfileOptions";
+import encryptMessage from "../../hooks/encryption/message/encryptMessage";
 
 const ChatLayout: React.FC = () => {
   const { id } = useParams();
@@ -37,6 +38,7 @@ const ChatLayout: React.FC = () => {
     }) => state.friends
   );
 
+  // console.log(messages)
   const reverseMessage = [...messages].reverse();
   const myInfo = useSelector(
     (state: { user: { user: userTypeCheck } }) => state.user.user
@@ -49,6 +51,8 @@ const ChatLayout: React.FC = () => {
   const trackKeyRef = useRef<HTMLInputElement>(null);
   const [upcomingMessage, setUpcomingMessage] = useState<upcomingMessageType>();
   const [countDown, setCountDown] = useState(4);
+
+  const friend = friends.friends.find((f) => f.senderId?._id === id || f.receiverId?._id === id)
 
   const loadMoreMessages = useCallback(() => {
     if (hasMore && !isLoading && id) {
@@ -93,13 +97,13 @@ const ChatLayout: React.FC = () => {
       setCountDown(0);
       // Only dispatch the message if it's intended for the current user
       if (
-        message?.receiverUsername === myInfo?.username ||
-        message?.senderUsername === myInfo?.username
+        message?.receiverId === id ||
+        message?.senderId === id
       ) {
         dispatch(adMessage(message));
-        if(message?.senderUsername === myInfo?.username){
+        if(message?.senderId === id){
           handleNotification(message.receiverName, message.message, message.receiverId, message.receiverPhotoUrl)
-        }else if(message?.receiverUsername === myInfo?.username){
+        }else if(message?.receiverId === id){
           handleNotification(message.senderName, message.message, message.senderId, message.senderPhotoUrl)
         }
       }
@@ -110,12 +114,12 @@ const ChatLayout: React.FC = () => {
     return () => {
       socket.off("message", handleIncomingMessage);
     };
-  }, [dispatch, myInfo?.username]);
+  }, [dispatch, myInfo?.username, id, navigate]);
 
 
 // update emoji in message
   socket.on('emojiUpdate', (message) => {
-    console.log("emoji",message)
+    // console.log("emoji",message)
     dispatch(updateEmoji(message))
   })
 
@@ -176,6 +180,13 @@ const ChatLayout: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const message = (e.target as HTMLFormElement).message.value;
+
+    let encryptedMessage = ''
+
+    if(friend?.isEncrypted){
+      encryptedMessage = await encryptMessage(message, friend.publicKey);
+    }
+    
     try {
       const response = await fetch(`${import.meta.env.VITE_API}/api/message`, {
         method: "POST",
@@ -185,7 +196,8 @@ const ChatLayout: React.FC = () => {
         },
         body: JSON.stringify({
           user,
-          message,
+          message : friend?.isEncrypted ? encryptedMessage : message,
+          isEncrypted: friend?.isEncrypted || false
         }),
       });
 
@@ -193,6 +205,9 @@ const ChatLayout: React.FC = () => {
         localStorage.removeItem("token");
         return navigate("/login");
       }
+      const data = await response.json();
+      dispatch(adMessage(data));
+      
       (e.target as HTMLFormElement).message.value = "";
       prevScrollHeightRef.current = 0;
 
@@ -263,7 +278,7 @@ const ChatLayout: React.FC = () => {
   }, [upcomingMessage]);
 
 
-  const friend = friends.friends.find((f) => f.senderId?._id === id || f.receiverId?._id === id)
+  
 
 
   return (
@@ -272,7 +287,7 @@ const ChatLayout: React.FC = () => {
         {/* Main Chat Area */}
         <div className={`flex-grow flex flex-col ${friend?.theme ? friend.theme : 'bg-gray-100'} w-full`}>
           {/* Chat Header */}
-          {user && <MessageProfileOptions chatId={friend?._id || ""} user={user} myInfo={myInfo} id={id || ""} />}
+          {user && <MessageProfileOptions chatId={friend?._id || ""} user={user} myInfo={myInfo} id={id || ""} isEncrypted={friend?.isEncrypted || false} />}
 
           {isLoading && (
             <h1 className="text-4xl font-bold text-center">Loading</h1>
@@ -283,11 +298,11 @@ const ChatLayout: React.FC = () => {
             ref={chatBoxRef}
             className="flex-grow p-4 overflow-y-auto w-full"
           >
-            {user && <Message reverseMessage={reverseMessage} user={user} myInfo={myInfo} />}
+            {user && <Message reverseMessage={reverseMessage} user={user} myInfo={myInfo} chatId={friend?._id || ''} isEncrypted={friend?.isEncrypted || false} />}
 
             <div ref={scrollRef} />
           </div>
-          {upcomingMessage && countDown !== 0 && upcomingMessage.senderId === id && (
+          {upcomingMessage && countDown !== 0 && upcomingMessage.senderId === id && !friend?.isEncrypted && (
             <div className="justify-start mt-auto m-5 block bg-white p-5">
               <div className=" rounded-lg w-full  text-gray-900">
                 upcoming: {upcomingMessage?.message}

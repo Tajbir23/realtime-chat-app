@@ -45,6 +45,10 @@ const messageSlice = createSlice({
             const _id = action.payload
             state.messages = state.messages.filter(msg => msg._id !== _id)
         },
+        deleteEncryptedMessage: (state, action) => {
+            const chatId = action.payload
+            state.messages = state.messages.filter(msg => !(msg.chatId === chatId && msg.isEncrypted === true))
+        },
         updateMessage: (state, action) => {
             const {_id, message, unsent, edited} = action.payload
             const messageToUpdate = state.messages.find(msg => msg._id === _id)
@@ -80,6 +84,6 @@ const messageSlice = createSlice({
     }
 })
 
-export const { incrementPage, adMessage, updateEmoji, deleteMessage, updateMessage } = messageSlice.actions
+export const { incrementPage, adMessage, updateEmoji, deleteMessage, updateMessage, deleteEncryptedMessage } = messageSlice.actions
 
 export default messageSlice.reducer
