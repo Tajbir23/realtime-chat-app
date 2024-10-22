@@ -14,8 +14,7 @@ export default function Emoji({ messageId, receiverId }: { messageId: string, re
   const handleEmojiSelect = async(emoji: string) => {
     setSelectedEmoji(emoji)
     setIsOpen(false)
-    // console.log(`Emoji ${emoji} selected for message ${messageId}`)
-    // Here you would typically send this information to your server
+
     try {
         const res = await fetch(`${import.meta.env.VITE_API}/api/emoji`,{
             method: "POST",
@@ -33,7 +32,7 @@ export default function Emoji({ messageId, receiverId }: { messageId: string, re
             throw new Error("Failed to send emoji")
         }
         const data = await res.json()
-        // console.log(data)
+
         dispatch(updateEmoji(data))
         setSelectedEmoji(null)
     } catch (error) {

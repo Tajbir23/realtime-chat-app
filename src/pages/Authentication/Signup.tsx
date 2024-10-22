@@ -89,6 +89,7 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
 
       if(data.token){
         localStorage.setItem('token', data.token)
+        localStorage.setItem('uid', data.uid)
         navigate('/')
       }
       

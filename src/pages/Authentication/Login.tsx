@@ -27,6 +27,7 @@ const Login: React.FC = () => {
       if(data.token){
         
         localStorage.setItem('token', data.token)
+        localStorage.setItem('uid', data.uid)
         navigate('/')
       }
     } catch (error) {

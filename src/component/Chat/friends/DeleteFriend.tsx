@@ -37,7 +37,7 @@ const DeleteFriend = ({isDeleteOpen, setIsDeleteOpen}: DeleteFriendProps) => {
                 })
             })
             await res.json()
-            // console.log(data)
+
             if(res.ok){
                 dispatch(deleteFriend(isDeleteOpen.id))
                 isDeleteOpen.open = false

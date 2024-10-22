@@ -38,7 +38,7 @@ const ChatLayout: React.FC = () => {
     }) => state.friends
   );
 
-  // console.log(messages)
+
   const reverseMessage = [...messages].reverse();
   const myInfo = useSelector(
     (state: { user: { user: userTypeCheck } }) => state.user.user
@@ -119,7 +119,6 @@ const ChatLayout: React.FC = () => {
 
 // update emoji in message
   socket.on('emojiUpdate', (message) => {
-    // console.log("emoji",message)
     dispatch(updateEmoji(message))
   })
 
@@ -298,7 +297,7 @@ const ChatLayout: React.FC = () => {
             ref={chatBoxRef}
             className="flex-grow p-4 overflow-y-auto w-full"
           >
-            {user && <Message reverseMessage={reverseMessage} user={user} myInfo={myInfo} chatId={friend?._id || ''} isEncrypted={friend?.isEncrypted || false} />}
+            {user && !isLoading &&  <Message reverseMessage={reverseMessage} user={user} myInfo={myInfo} chatId={friend?._id || ''} isEncrypted={friend?.isEncrypted || false} />}
 
             <div ref={scrollRef} />
           </div>
