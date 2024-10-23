@@ -11,6 +11,8 @@ const Message = ({reverseMessage, user, myInfo, chatId, isEncrypted}: {reverseMe
   return (
     <>
         {reverseMessage.map((msg, index) => {
+          const encryptionKey = sessionStorage.getItem(`${chatId}`)
+
            const decryptedMessage = msg.isEncrypted && isEncrypted ? decryptMessage(msg.message, chatId) : ''
           //  console.log(decryptedMessage)
               return <>
@@ -36,7 +38,7 @@ const Message = ({reverseMessage, user, myInfo, chatId, isEncrypted}: {reverseMe
                         : "bg-gray-300 text-gray-900"
                     }`}
                     >
-                    {msg.isEncrypted && isEncrypted ? decryptedMessage : msg.message}
+                    {msg.isEncrypted && isEncrypted && encryptionKey ? decryptedMessage : msg.message}
                     </div>
                     <div className={`${msg.senderUsername === myInfo.username ? 'absolute right-0 -bottom-2 z-30' : 'absolute left-0 -bottom-2 z-30'}`}>{msg.emoji ? msg.emoji : ''}</div>
                 </div>
