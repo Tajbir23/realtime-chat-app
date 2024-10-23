@@ -8,6 +8,7 @@ import {
   adMessage,
   incrementPage,
   updateEmoji,
+  updateSeenMessage,
 } from "../../redux/features/message/messageSlice";
 import messageThunk from "../../redux/thunks/messageThunks";
 import { socket } from "../../hooks/useSocket";
@@ -18,10 +19,13 @@ import message from "../../redux/typeCheck/message";
 import Message from "./message/Message";
 import MessageProfileOptions from "./message/MessageProfileOptions";
 import encryptMessage from "../../hooks/encryption/message/encryptMessage";
+import { updateFriendListSeen } from "../../redux/features/user/friendsSlice";
 
 const ChatLayout: React.FC = () => {
   const { id } = useParams();
   const [user, setUser] = useState<userTypeCheck | undefined>();
+  const [lastMessageId, setLastMessageId] = useState<string | undefined>();
+
   const dispatch = useDispatch<AppDispatch>();
   const { messages, page, hasMore, isLoading } = useSelector(
     (state: { message: MessageState }) => state.message
@@ -92,6 +96,7 @@ const ChatLayout: React.FC = () => {
         };
       }
     }
+    
 
     const handleIncomingMessage = (message: message) => {
       setCountDown(0);
@@ -101,7 +106,11 @@ const ChatLayout: React.FC = () => {
         message?.senderId === id
       ) {
         dispatch(adMessage(message));
+
         if(message?.senderId === id){
+          dispatch(updateSeenMessage(message?._id))
+          setLastMessageId(message?._id);
+
           handleNotification(message.receiverName, message.message, message.receiverId, message.receiverPhotoUrl)
         }else if(message?.receiverId === id){
           handleNotification(message.senderName, message.message, message.senderId, message.senderPhotoUrl)
@@ -176,49 +185,7 @@ const ChatLayout: React.FC = () => {
     user();
   }, [id, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const message = (e.target as HTMLFormElement).message.value;
-
-    let encryptedMessage = ''
-
-    if(friend?.isEncrypted){
-      encryptedMessage = await encryptMessage(message, friend.publicKey);
-    }
-    
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API}/api/message`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user,
-          message : friend?.isEncrypted ? encryptedMessage : message,
-          isEncrypted: friend?.isEncrypted || false
-        }),
-      });
-
-      if (response.status === 401 || response.status === 403) {
-        localStorage.removeItem("token");
-        return navigate("/login");
-      }
-      const data = await response.json();
-      dispatch(adMessage(data));
-      
-      (e.target as HTMLFormElement).message.value = "";
-      prevScrollHeightRef.current = 0;
-
-      if (scrollRef.current) {
-        scrollRef.current.scrollIntoView({ behavior: "smooth" });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  /* track message key and send as upcoming message */
+  
 
   useEffect(() => {
     const element = trackKeyRef.current;
@@ -277,7 +244,73 @@ const ChatLayout: React.FC = () => {
   }, [upcomingMessage]);
 
 
-  
+  useEffect(() => {
+    dispatch(updateFriendListSeen(friend?._id))
+    const receiverId = id
+    fetch(`${import.meta.env.VITE_API}/api/seen_message`,{
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        receiverId: receiverId,
+        lastMessageId,
+        chatId: friend?._id
+      }),
+    })
+  },[id, dispatch, friend, lastMessageId])
+
+  useEffect(() => {
+    socket.on("seenMessage", (messageId) => {
+      dispatch(updateSeenMessage(messageId))
+    })
+    return () => {
+      socket.off("seenMessage")
+    }
+  },[dispatch])
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const message = (e.target as HTMLFormElement).message.value;
+
+    let encryptedMessage = ''
+
+    if(friend?.isEncrypted){
+      encryptedMessage = await encryptMessage(message, friend.publicKey);
+    }
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API}/api/message`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user,
+          message : friend?.isEncrypted ? encryptedMessage : message,
+          isEncrypted: friend?.isEncrypted || false
+        }),
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem("token");
+        return navigate("/login");
+      }
+      const data = await response.json();
+      dispatch(adMessage(data));
+      
+      (e.target as HTMLFormElement).message.value = "";
+      prevScrollHeightRef.current = 0;
+
+      if (scrollRef.current) {
+        scrollRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 
   return (

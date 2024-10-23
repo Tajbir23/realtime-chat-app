@@ -17,7 +17,7 @@ const Message = ({
   chatId: string;
   isEncrypted: boolean;
 }) => {
-  console.log("message", reverseMessage);
+  
   return (
     <>
       {reverseMessage.map((msg, index) => {

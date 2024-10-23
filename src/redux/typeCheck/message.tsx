@@ -13,6 +13,7 @@ interface message {
     receiverEmail: string;
     receiverPhotoUrl: string;
     message: string;
+    seen: boolean;
     isEncrypted: boolean;
     edited: boolean;
     unsent: boolean;

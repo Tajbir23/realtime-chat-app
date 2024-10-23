@@ -137,11 +137,11 @@ const Friends: React.FC = () => {
                     )}
                   </p>
                 </div>
-                <div className="flex justify-between mx-3">
-                  <p className="text-sm text-gray-500">
+                <div className={`flex justify-between mx-3 ${!friend?.lastMessageSeen && friend?.lastMessageSeenUserId?._id !== me?._id ? "font-extrabold" : ""}`}>
+                  <p className="text-sm ">
                     {friend.lastMessage?.split("").slice(0, 5)}...
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm ">
                     {formatLastMessage(friend.lastMessageAt)}
                   </p>
                 </div>

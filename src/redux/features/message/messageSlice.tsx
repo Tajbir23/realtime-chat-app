@@ -57,6 +57,13 @@ const messageSlice = createSlice({
                 messageToUpdate.unsent = unsent
                 messageToUpdate.edited = edited
             }
+        },
+        updateSeenMessage: (state, action) => {
+            const id = action.payload
+            const message = state.messages.find(msg => msg._id === id)
+            if(message){
+                message.seen = true
+            }
         }
     },
     extraReducers: (builder) => {
@@ -84,6 +91,6 @@ const messageSlice = createSlice({
     }
 })
 
-export const { incrementPage, adMessage, updateEmoji, deleteMessage, updateMessage, deleteEncryptedMessage } = messageSlice.actions
+export const { incrementPage, adMessage, updateEmoji, deleteMessage, updateMessage, deleteEncryptedMessage, updateSeenMessage } = messageSlice.actions
 
 export default messageSlice.reducer

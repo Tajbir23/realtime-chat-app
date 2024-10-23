@@ -22,13 +22,6 @@ const friendsSlice = createSlice({
             const updateFriends = action.payload as friend
             state.friends = state.friends.filter(friend => friend._id !== updateFriends._id)
             state.friends.unshift(updateFriends)
-            // const index = state.friends.findIndex(friend => friend._id === updateFriends._id)
-
-            // if(index > -1){
-            //     // state.friends[index] = updateFriends
-            //     state.friends.splice(index, 1)
-            //     state.friends.unshift(updateFriends)
-            // }
         },
         updateFriendActiveStatus: (state, action) => {
             const updateFriend = action.payload as friend
@@ -60,6 +53,13 @@ const friendsSlice = createSlice({
                 friend.publicKey = publicKey
                 
             }
+        },
+        updateFriendListSeen: (state, action) => {
+            const chatId = action.payload as string
+            const friend = state.friends.find(friend => friend._id === chatId)
+            if(friend){
+                friend.lastMessageSeen = true
+            }
         }
     },
     extraReducers: (builder) => {
@@ -82,6 +82,6 @@ const friendsSlice = createSlice({
     }
 })
 
-export const { incrementPage, replaceFriends, updateFriendActiveStatus, updateTheme, deleteFriend, updateFriend} = friendsSlice.actions;
+export const { incrementPage, replaceFriends, updateFriendActiveStatus, updateTheme, deleteFriend, updateFriend, updateFriendListSeen} = friendsSlice.actions;
 
 export default friendsSlice.reducer;

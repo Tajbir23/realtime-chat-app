@@ -4,6 +4,9 @@ interface friends {
     createdAt: string;
   lastMessage: string;
   lastMessageAt: number;
+  lastMessageSeen: boolean;
+  lastMessageSeenUserId: userTypeCheck;
+  lastMessageSender: string;
   receiverId: userTypeCheck;
   senderId: userTypeCheck;
   updatedAt: string;
