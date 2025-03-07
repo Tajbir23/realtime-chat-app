@@ -1,4 +1,3 @@
-
 import Aside from "../component/Chat/Aside"
 
 import { Outlet, useNavigate } from "react-router-dom"
@@ -34,32 +33,45 @@ const Chat = () => {
   },[])
 
   useEffect(() => {
-    Notification.requestPermission();
-    if(Notification.permission === 'default'){
+    // Check if the browser supports notifications
+    if (!("Notification" in window)) {
+      console.log("This browser does not support desktop notifications");
+      return;
+    }
+
+    // Request permission only if not already granted
+    if (Notification.permission !== 'granted') {
       Notification.requestPermission();
     }
-  },[])
+  }, []);
 
   useEffect(() => {
-    
     socket.on('likeAndCommentNotification', (data) => {
+     
+      dispatch(incrementNotificationCount());
+      dispatch(addNewNotification(data?.newNotification));
+      toast.success('You have a new notification');
 
-      dispatch(incrementNotificationCount())
-      dispatch(addNewNotification(data?.newNotification))
-      toast.success('You have a new notification')
-      const notification = new Notification('like', {
-        body: data?.message,
-        icon: '/favicon.ico',
-      });
-      notification.onclick = () => {
-        window.focus()
-        navigate(`/my_day`)
-      };
-    })
+      // Only create notification if permission is granted
+      if (Notification.permission === 'granted') {
+        console.log("notification test", true)
+        const notification = new Notification(data?.title || 'New Notification', {
+          body: data?.message,
+          requireInteraction: true,
+          icon: '/favicon.ico',
+        });
+        
+        console.log(notification)
+        notification.onclick = () => {
+          window.focus();
+          navigate(`/my_day`);
+        };
+      }
+    });
     return () => {
-      socket.off('likeAndCommentNotification')
-    }
-  },[dispatch, navigate])
+      socket.off('likeAndCommentNotification');
+    };
+  }, [dispatch, navigate]);
 
   useEffect(() => {
     socket.on('updateMessage', (message) => {

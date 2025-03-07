@@ -14,6 +14,7 @@ import unreadNotifications from "../../redux/thunks/unreadNotifiactionCountThunk
 import notificationState from "../../redux/typeCheck/notificationState";
 import { CiBellOn } from "react-icons/ci";
 import ProfileOptions from "./profile/ProfileOptions";
+import Users from "./users/Users";
 
 
 // const socket = io(`${import.meta.env.VITE_API}`);
@@ -22,17 +23,18 @@ const Aside = () => {
   const user = useSelector(
     (state: { user: { user: userTypeCheck } }) => state.user.user
   );
-  const { users, page, hasMore, isLoading } = useSelector((state: { allUsers: allUsersState }) => state.allUsers);
+
   const unreadNotificationCount = useSelector((state : {notification: notificationState}) => state.notification)
   const isOpen = useSelector((state: ToggleStateCheck) => state.toggle.isOpen);
   const dispatch = useDispatch<AppDispatch>();
-  const userListRef = useRef<HTMLUListElement>(null);
+
   const [search, setSearch] = useState("");
   const [searchUsers, setSearchUsers] = useState<userTypeCheck[]>([]);
   const searchResultRef = useRef<HTMLUListElement>(null);
   const [searchResultVisible, setSearchResultVisible] = useState(false)
   const [visibleMyDayButton, setVisibleMyDayButton] = useState(false)
   const myDayButtonRef = useRef<HTMLDivElement>(null)
+  const [activeTab, setActiveTab] = useState("friends")
 
 
   useEffect(() => {
@@ -55,30 +57,7 @@ const Aside = () => {
     socket.emit('connected', user)
   },[user])
   
-  const handleUserScroll = useCallback(() => {
-    const element = userListRef.current
-    
-    if(element){
-      if(element.scrollHeight - element.scrollTop <= element.clientHeight + 1){
-        if(hasMore && !isLoading){
-          
-          dispatch(incrementPage())
-          dispatch(allUsers(page))
-        }
-      }
-    }
-  },[hasMore, isLoading, dispatch, page])
 
-  
-  useEffect(() => {
-    const element = userListRef.current
-    if(element){
-      element.addEventListener('scroll', handleUserScroll)
-      return () => {
-        element.removeEventListener('scroll', handleUserScroll)
-      }
-    }
-  },[handleUserScroll])
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API}/api/search/${search}?email=${user?.email}`,{
@@ -228,47 +207,46 @@ useEffect(() => {
           {visibleMyDayButton && <div ref={myDayButtonRef} className="absolute left-5 top-14 z-30">
             <ProfileOptions myInfo={user} />
           </div>}
-            <Friends />
 
-          <ul ref={userListRef} className="space-y-2 font-medium overflow-y-auto flex-grow px-3 h-1/2">
-            <li className="text-xl font-bold bg-gray-50">Users</li>
-            {users?.map(chatUser => {
-              return (
-                <li key={chatUser._id} className={`${chatUser?.email === user?.email ? "hidden" : "block"}`}>
-                  <NavLink
-                    onClick={() => dispatch(toggle())}
-                    to={`/chat/${chatUser._id}`}
-                    className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                  >
-                    {/* <img
-                      src={chatUser.photoUrl}
-                      className="h-8 w-8 rounded-full"
-                      alt="image not found"
-                    /> */}
-                    {chatUser?.isActiveMyDay && chatUser?.myDayEndAt > Number(Date.now()) ? <Link to={`/day/${chatUser?._id}`}>
-                    <img
-                      src={chatUser.photoUrl}
-                      className="h-8 w-8 rounded-full ring-4 ring-blue-500"
-                      alt="image not found"
-                    />
-                    </Link> : <img
-                      src={chatUser.photoUrl}
-                      className="h-8 w-8 rounded-full"
-                      alt="image not found"
-                    />}
-                    <span className="ms-3 mr-auto">{chatUser.name}</span>
-                    <p className="ms-4 text-sm ">
-                      {chatUser.isActive ? (
-                        <div className="h-2 w-2 rounded-full bg-blue-700"></div>
-                      ) : (
-                        <div className="h-2 w-2 rounded-full bg-red-700"></div>
-                      )}
-                    </p>
-                  </NavLink>
-                </li>
-              );
-            })}
-          </ul>
+            {/* start friends and users */}
+            <div>
+              <div className="flex justify-between gap-4 px-3 py-2 border-b">
+                <button 
+                  onClick={() => setActiveTab("friends")}
+                  className={`px-4 w-full py-2 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out transform ${
+                    activeTab === "friends" 
+                      ? "bg-blue-600 text-white scale-105" 
+                      : "text-gray-500 hover:bg-gray-100"
+                  }`}
+                >
+                  Friends
+                </button>
+                <button 
+                  onClick={() => setActiveTab("users")}
+                  className={`px-4 w-full py-2 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out transform ${
+                    activeTab === "users"
+                      ? "bg-blue-600 text-white scale-105"
+                      : "text-gray-500 hover:bg-gray-100" 
+                  }`}
+                >
+                  Users
+                </button>
+              </div>
+              <div className="relative">
+                <div className={`transition-opacity duration-300 absolute w-full ${
+                  activeTab === "friends" ? "opacity-100 z-10" : "opacity-0 z-0"
+                }`}>
+                  <Friends />
+                </div>
+                <div className={`transition-opacity duration-300 absolute w-full ${
+                  activeTab === "users" ? "opacity-100 z-10" : "opacity-0 z-0"
+                }`}>
+                  <Users user={user} />
+                </div>
+              </div>
+            </div>
+            {/* end friends and users */}
+
         </div>
       </aside>
     </div>

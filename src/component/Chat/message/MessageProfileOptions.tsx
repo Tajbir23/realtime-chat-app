@@ -15,7 +15,7 @@ const MessageProfileOptions = ({
   myInfo,
   user,
   id,
-  isEncrypted
+  isEncrypted,
 }: {
   chatId: string;
   myInfo: userTypeCheck;
@@ -24,10 +24,10 @@ const MessageProfileOptions = ({
   isEncrypted: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isThemeOpen, setIsThemeOpen] = useState(false)
+  const [isThemeOpen, setIsThemeOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
-  
-  const dispatch = useDispatch()
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
@@ -47,44 +47,44 @@ const MessageProfileOptions = ({
     };
   }, [modalRef]);
 
-  const handleEncryption = async() => {
-    const {publicKeyPem, encryptPrivateKey } = GenerateSecretKey();
+  const handleEncryption = async () => {
+    const { publicKeyPem, encryptPrivateKey } = GenerateSecretKey();
 
     // console.log(encryptPrivateKey)
     try {
-      const res = await fetch(`${import.meta.env.VITE_API}/api/encryption`,{
-        method: 'PUT',
+      const res = await fetch(`${import.meta.env.VITE_API}/api/encryption`, {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           isEncrypted: !isEncrypted,
           chatId,
           receiver: id,
           publicKey: publicKeyPem,
-          encryptPrivateKey
+          encryptPrivateKey,
         }),
-      })
+      });
 
-      const {data, warning} = await res.json()
-      
-      if(warning){
-        return toast.error(warning)
+      const { data, warning } = await res.json();
+
+      if (warning) {
+        return toast.error(warning);
       }
 
-      if(!data.isEncrypted){
-        sessionStorage.removeItem(chatId)
-        dispatch(deleteEncryptedMessage(chatId))
+      if (!data.isEncrypted) {
+        sessionStorage.removeItem(chatId);
+        dispatch(deleteEncryptedMessage(chatId));
       }
-      if(res.ok){
-        sessionStorage.setItem(`${chatId}`, encryptPrivateKey)
-        dispatch(updateFriend(data))
+      if (res.ok) {
+        sessionStorage.setItem(`${chatId}`, encryptPrivateKey);
+        dispatch(updateFriend(data));
       }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
   return (
     <>
       <div
@@ -112,28 +112,45 @@ const MessageProfileOptions = ({
             ref={modalRef}
             className="absolute left-10 top-14 z-30 max-w-44  w-full shadow-2xl p-5 rounded-lg backdrop-blur-md flex flex-col gap 5"
           >
-            <button onClick={() => setIsThemeOpen(true)} className="relative w-full p-2 hover:bg-white rounded-lg">
-              <span>Theme</span>
-              {isThemeOpen && <div className="absolute -right-32 rounded-lg z-50">
-                <ThemeSelector setIsThemeOpen={setIsThemeOpen} chatId={chatId} />
-               </div>}
-            </button>
-            {user.isActiveMyDay && <Link
-              to={`/day/${user?._id}`}
-              className="w-full p-2 hover:bg-white rounded-lg text-center"
+            <button
+              onClick={() => setIsThemeOpen(true)}
+              className="relative w-full p-2 hover:bg-white rounded-lg"
             >
-              See Day
-            </Link>}
+              <span>Theme</span>
+              {isThemeOpen && (
+                <div className="absolute -right-32 rounded-lg z-50">
+                  <ThemeSelector
+                    setIsThemeOpen={setIsThemeOpen}
+                    chatId={chatId}
+                  />
+                </div>
+              )}
+            </button>
+            {user.isActiveMyDay && (
+              <Link
+                to={`/day/${user?._id}`}
+                className="w-full p-2 hover:bg-white rounded-lg text-center"
+              >
+                See Day
+              </Link>
+            )}
             <div className="flex gap-5 items-center">
               <p>Encryption</p>
               <label className="relative inline-flex items-center cursor-pointer">
-      <input type="checkbox" value="" checked={isEncrypted} onChange={() => handleEncryption()} className="sr-only peer" />
-      <div className="w-9 h-5 bg-gray-200 hover:bg-gray-300 peer-focus:outline-0 peer-focus:ring-transparent rounded-full peer transition-all ease-in-out duration-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 hover:peer-checked:bg-indigo-700"></div>
-      </label>
+                <input
+                  type="checkbox"
+                  value=""
+                  checked={isEncrypted}
+                  onChange={() => handleEncryption()}
+                  className="sr-only peer"
+                  aria-label="Toggle encryption"
+                />
+                <div className="w-9 h-5 bg-gray-200 hover:bg-gray-300 peer-focus:outline-0 peer-focus:ring-transparent rounded-full peer transition-all ease-in-out duration-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 hover:peer-checked:bg-indigo-700"></div>
+              </label>
             </div>
           </div>
         )}
-      
+
         <BlockButton id={id} myInfo={myInfo} />
       </div>
     </>
