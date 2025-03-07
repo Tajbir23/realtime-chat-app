@@ -14,6 +14,15 @@ import { updateFriend, updateTheme } from "../redux/features/user/friendsSlice";
 
 
 const Chat = () => {
+  console.log(`
+    ████████╗ █████╗      ██╗██████╗ ██╗██████╗ 
+    ╚══██╔══╝██╔══██╗     ██║██╔══██╗██║██╔══██╗
+       ██║   ███████║     ██║██████╔╝██║██████╔╝
+       ██║   ██╔══██║██   ██║██╔══██╗██║██╔══██╗
+       ██║   ██║  ██║╚█████╔╝██████╔╝██║██║  ██║
+       ╚═╝   ╚═╝  ╚═╝ ╚════╝ ╚═════╝ ╚═╝╚═╝  ╚═╝
+  `);
+ 
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const userData = useSelector((state: { user: { isLoading: boolean; user: { error: string; email: string }, error: string; } }) => state.user)

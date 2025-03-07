@@ -2,11 +2,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggle } from "../../redux/features/toggle/toggleSlice";
 import userTypeCheck from "../../redux/typeCheck/user";
 import ToggleStateCheck from "../../redux/typeCheck/toggle";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { socket } from "../../hooks/useSocket";
-import { incrementPage, replaceUser } from "../../redux/features/user/allUsersSlice";
-import allUsersState from "../../redux/typeCheck/allUserState";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { replaceUser } from "../../redux/features/user/allUsersSlice";
+import { useEffect, useRef, useState } from "react";
 import allUsers from "../../redux/thunks/allUserThunks";
 import { AppDispatch } from "../../redux/app/store";
 import Friends from "./friends/Friends";
@@ -119,9 +118,9 @@ useEffect(() => {
         data-drawer-toggle="default-sidebar"
         aria-controls="default-sidebar"
         type="button"
-        className="inline-flex fixed z-10 right-0 items-center p-2 mt-3 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+        className="inline-flex fixed z-10 right-4 top-4 items-center p-2 text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
       >
-        <span className="sr-only">Open sidebar</span>
+        <span className="sr-only">Toggle sidebar</span>
         <svg
           className="w-6 h-6"
           aria-hidden="true"
@@ -139,114 +138,133 @@ useEffect(() => {
 
       <aside
         id="default-sidebar"
-        className={`fixed top-0 left-0 z-10 w-full h-screen overflow-hidden transition-transform sm:w-80 ${
+        className={`fixed top-0 left-0 z-40 w-full h-screen transition-transform duration-300 ease-in-out sm:w-80 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } sm:translate-x-0`}
         aria-label="Sidebar"
       >
-        <div className="h-full flex flex-col px-3 bg-gray-50">
-          <div className="flex justify-between items-center p-2 fixed overflow-hidden w-full">
-            <div className="flex items-center justify-between mt-4 gap-4 w-[95%]">
-              <div className="flex items-center gap-4">
-                <img
-                  onClick={() => setVisibleMyDayButton(!visibleMyDayButton)}
-                  className="h-8 w-8 rounded-full border-blue-900 border-[4px] cursor-pointer"
-                  src={user?.photoUrl}
-                  alt="image not found"
-                />
-                <div>
-                  <h1 className="text-lg font-bold">{user?.name}</h1>
+        <div className="h-full flex flex-col bg-gray-50">
+          {/* Header */}
+          <div className="px-4 py-3 bg-white border-b">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <img
+                    onClick={() => setVisibleMyDayButton(!visibleMyDayButton)}
+                    className="h-10 w-10 rounded-full object-cover cursor-pointer ring-2 ring-blue-500"
+                    src={user?.photoUrl}
+                    alt={user?.name}
+                  />
+                  {visibleMyDayButton && (
+                    <div ref={myDayButtonRef} className="absolute left-0 top-12 z-50">
+                      <ProfileOptions myInfo={user} />
+                    </div>
+                  )}
                 </div>
-              </div>
-              <div>
-                <NavLink to="/notification" onClick={() => dispatch(toggle())}><CiBellOn className="text-2xl cursor-pointer" /></NavLink>
-                {unreadNotificationCount.totalNotifications > 0 && <span className=" absolute bottom-3 size-2 bg-red-800 rounded-full"></span>}
+                <h1 className="font-semibold text-gray-900">{user?.name}</h1>
               </div>
               
-            </div>
-            <div
-              className="cursor-pointer inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
-              onClick={() => dispatch(toggle())}
-            >
-              
-              <span className="sr-only">Open sidebar</span>
-              <svg
-                className="w-6 h-6"
-                aria-hidden="true"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clipRule="evenodd"
-                  fillRule="evenodd"
-                  d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
-                ></path>
-              </svg>
-            </div>
-          </div>
-          <div className="mt-20">
-            <input onChange={(e) => setSearch(e.target.value)} className="border w-full" type="search" placeholder="Search here" />
-          </div>
-
-          {/* here search result */}
-          {searchResultVisible && <ul ref={searchResultRef} className="absolute top-32 z-10 bg-white shadow-2xl p-5">
-            {searchUsers?.map(user => (
-              <li key={user._id}>
-                <NavLink to={`/chat/${user._id}`} onClick={() => dispatch(toggle())} className="cursor-pointer flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group" >
-                <img
-                  src={user.photoUrl}
-                  className="h-8 w-8 rounded-full"
-                  alt="image not found"
-                />
-                <span className="ms-3">{user.name}</span>
-              </NavLink>
-              </li>
-            ))}
-          </ul>}
-          {visibleMyDayButton && <div ref={myDayButtonRef} className="absolute left-5 top-14 z-30">
-            <ProfileOptions myInfo={user} />
-          </div>}
-
-            {/* start friends and users */}
-            <div>
-              <div className="flex justify-between gap-4 px-3 py-2 border-b">
-                <button 
-                  onClick={() => setActiveTab("friends")}
-                  className={`px-4 w-full py-2 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out transform ${
-                    activeTab === "friends" 
-                      ? "bg-blue-600 text-white scale-105" 
-                      : "text-gray-500 hover:bg-gray-100"
-                  }`}
+              <div className="flex items-center gap-2">
+                <NavLink 
+                  to="/notification" 
+                  onClick={() => dispatch(toggle())}
+                  className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  Friends
-                </button>
-                <button 
-                  onClick={() => setActiveTab("users")}
-                  className={`px-4 w-full py-2 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out transform ${
-                    activeTab === "users"
-                      ? "bg-blue-600 text-white scale-105"
-                      : "text-gray-500 hover:bg-gray-100" 
-                  }`}
+                  <CiBellOn className="text-2xl text-gray-600" />
+                  {unreadNotificationCount.totalNotifications > 0 && (
+                    <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+                  )}
+                </NavLink>
+                
+                <button
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors sm:hidden"
+                  onClick={() => dispatch(toggle())}
+                  aria-label="Close sidebar"
                 >
-                  Users
+                  <svg
+                    className="w-6 h-6 text-gray-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
+            </div>
+
+            {/* Search Bar */}
+            <div className="mt-4">
               <div className="relative">
-                <div className={`transition-opacity duration-300 absolute w-full ${
-                  activeTab === "friends" ? "opacity-100 z-10" : "opacity-0 z-0"
-                }`}>
-                  <Friends />
-                </div>
-                <div className={`transition-opacity duration-300 absolute w-full ${
-                  activeTab === "users" ? "opacity-100 z-10" : "opacity-0 z-0"
-                }`}>
-                  <Users user={user} />
-                </div>
+                <input 
+                  onChange={(e) => setSearch(e.target.value)} 
+                  className="w-full px-4 py-2 bg-gray-100 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
+                  type="search" 
+                  placeholder="Search people..."
+                />
+                {searchResultVisible && (
+                  <ul ref={searchResultRef} className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg py-2 z-50">
+                    {searchUsers?.map(user => (
+                      <li key={user._id}>
+                        <NavLink 
+                          to={`/chat/${user._id}`} 
+                          onClick={() => dispatch(toggle())}
+                          className="flex items-center px-4 py-2 hover:bg-gray-50 transition-colors"
+                        >
+                          <img
+                            src={user.photoUrl}
+                            className="h-8 w-8 rounded-full object-cover"
+                            alt={user.name}
+                          />
+                          <span className="ml-3 text-gray-900">{user.name}</span>
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
-            {/* end friends and users */}
+          </div>
 
+          {/* Tabs */}
+          <div className="px-4 py-3">
+            <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
+              <button 
+                onClick={() => setActiveTab("friends")}
+                className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                  activeTab === "friends" 
+                    ? "bg-white text-blue-600 shadow-sm" 
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                Friends
+              </button>
+              <button 
+                onClick={() => setActiveTab("users")}
+                className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                  activeTab === "users"
+                    ? "bg-white text-blue-600 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                Users
+              </button>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 relative overflow-hidden">
+            <div className={`absolute inset-0 transition-opacity duration-300 ${
+              activeTab === "friends" ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}>
+              <Friends />
+            </div>
+            <div className={`absolute inset-0 transition-opacity duration-300 ${
+              activeTab === "users" ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}>
+              <Users user={user} />
+            </div>
+          </div>
         </div>
       </aside>
     </div>

@@ -1,76 +1,89 @@
-import { useEffect, useRef} from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateTheme } from '../../../../redux/features/user/friendsSlice';
 
-// Define theme options
-const themes = {
-  white: '',
-  reset: 'bg-gray-100',
-  default: 'bg-blue-500',
-  green: 'bg-green-500',
-  purple: 'bg-purple-500',
-  red: 'bg-red-500',
-};
+const themes = [
+  { id: 'sunset', color: 'bg-gradient-to-r from-orange-400 to-pink-500 text-white hover:translate-z-2 transition-transform duration-300', label: 'Sunset Glow' },
+  { id: 'ocean', color: 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white hover:translate-z-1 transition-transform duration-300', label: 'Ocean Waves' },
+  { id: 'aurora', color: 'bg-gradient-to-r from-green-300 to-purple-400 text-white hover:translate-z-3 transition-transform duration-300', label: 'Aurora Lights' },
+  { id: 'golden', color: 'bg-gradient-to-r from-yellow-400 to-amber-500 text-white hover:translate-z-2 transition-transform duration-300', label: 'Golden Hour' },
+  { id: 'midnight', color: 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:translate-z-1 transition-transform duration-300', label: 'Midnight Sky' },
+  { id: 'cherry', color: 'bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:translate-z-2 transition-transform duration-300', label: 'Cherry Blossom' },
+  { id: 'forest', color: 'bg-gradient-to-r from-emerald-400 to-teal-500 text-white hover:translate-z-3 transition-transform duration-300', label: 'Enchanted Forest' },
+  { id: 'cosmic', color: 'bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white hover:translate-z-2 transition-transform duration-300', label: 'Cosmic Dream' },
+  { id: 'reset', color: '', label: 'Clean Slate' },
+];
 
-const ThemeSelector = ({setIsThemeOpen, chatId}: {setIsThemeOpen: (isOpen: boolean) => void; chatId: string}) => {
+const ThemeSelector = ({
+  setIsThemeOpen,
+  chatId
+}: {
+  setIsThemeOpen: (isOpen: boolean) => void;
+  chatId: string;
+}) => {
   const themeRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch()
-  // const [selectedTheme, setSelectedTheme] = useState<keyof typeof themes>('white');
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    // Close the theme selector when clicked outside
     const handleClickOutside = (event: MouseEvent | TouchEvent | KeyboardEvent) => {
-      if (themeRef.current && !(themeRef.current as Node).contains(event.target as Node)) {
-        setIsThemeOpen(false)
+      if (themeRef.current && !themeRef.current.contains(event.target as Node)) {
+        setIsThemeOpen(false);
       }
     };
+
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
     };
-  },[themeRef, setIsThemeOpen])
+  }, [setIsThemeOpen]);
 
-  
-  const handleThemeChange = async (theme: keyof typeof themes) => {
-    // setSelectedTheme(theme);
-    const setSelectedTheme = themes[theme];
-    
+  const handleThemeChange = async (themeId: string, themeColor: string) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API}/api/chat/theme/${chatId}`,{
+      const res = await fetch(`${import.meta.env.VITE_API}/api/chat/theme/${chatId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({
-          theme: setSelectedTheme,
-          themeType: theme
+          theme: themeColor,
+          themeType: themeId
         }),
-      })
-      const data = await res.json()
-      // console.log(data)
-      if(res.ok) {
-        dispatch(updateTheme(data))
-        setIsThemeOpen(false)
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        dispatch(updateTheme(data));
+        setIsThemeOpen(false);
       }
     } catch (error) {
-      console.log(error)
+      console.error('Failed to update theme:', error);
     }
   };
 
   return (
-    <div ref={themeRef} className={`flex items-center justify-center p-5 rounded-lg bg-white`}>
-      
-      <div className='grid grid-cols-3 gap-5'>
-        <div onClick={() => handleThemeChange('default')} className={`h-8 w-8 rounded-full border border-black ${themes.default}`}></div>
-        <div onClick={() => handleThemeChange('green')} className={`h-8 w-8 rounded-full border border-black ${themes.green}`}></div>
-        <div onClick={() => handleThemeChange('purple')} className={`h-8 w-8 rounded-full border border-black ${themes.purple}`}></div>
-        <div onClick={() => handleThemeChange('red')} className={`h-8 w-8 rounded-full border border-black ${themes.red}`}></div>
-        <div onClick={() => handleThemeChange('reset')} className={`h-8 w-8 rounded-full border border-black ${themes.reset}`}></div>
+    <div 
+      ref={themeRef}
+      className="bg-white rounded-lg shadow-xl p-4 min-w-[200px]"
+    >
+      <h3 className="text-gray-700 font-medium mb-3 text-center">Choose Theme</h3>
+      <div className="space-y-2">
+        {themes.map((theme) => (
+          <button
+            key={theme.id}
+            onClick={() => handleThemeChange(theme.id, theme.color)}
+            className="w-full flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <div className={`w-6 h-6 rounded-full ${theme.color} shadow-inner border border-gray-200`} />
+            <span className="text-sm text-gray-600">{theme.label}</span>
+          </button>
+        ))}
       </div>
     </div>
   );
 };
+
 export default ThemeSelector;

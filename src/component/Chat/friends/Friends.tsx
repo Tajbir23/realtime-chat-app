@@ -100,61 +100,78 @@ const Friends: React.FC = () => {
     return new Date(lastMessageAt).toLocaleDateString(); 
   };
   return (
-    <ul ref={friendListRef} className="space-y-2 z-0 font-medium my-5 pb-5 min-h-10 max-h-72 overflow-y-auto px-3">
-      
-      {friends.friends.length > 0 && friends.friends.map((friend) => {
-        
-        return (
-          <>
-            <li className="flex items-center">
+    <ul ref={friendListRef} className="space-y-3 font-medium py-4 min-h-10 max-h-[calc(100vh-240px)] overflow-y-auto px-2">
+      {friends.friends.length > 0 && friends.friends.map((friend) => (
+        <li key={friend._id} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div className="flex items-center p-3">
             <NavLink
               onClick={() => dispatch(toggle())}
               to={`/chat/${friend.receiverId?._id || friend.senderId?._id}`}
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full"
+              className="flex items-center flex-1"
             >
-              {friend.senderId?.isActiveMyDay || friend.receiverId?.isActiveMyDay && friend.senderId?.myDayEndAt > Number(Date.now()) || friend.receiverId?.myDayEndAt > Number(Date.now()) ? <Link to={`/day/${friend.senderId?._id || friend.receiverId?._id}`}>
-              <img
-                src={friend.receiverId?.photoUrl || friend.senderId?.photoUrl}
-                className="h-8 w-8 ring-4 ring-blue-500 rounded-full"
-                alt="image not found"
-              />
-              </Link> : <img
-                src={friend.receiverId?.photoUrl || friend.senderId?.photoUrl}
-                className="h-8 w-8 rounded-full"
-                alt="image not found"
-              />}
-              <div className="w-full">
-                <div className="flex items-center">
-                  <span className="ms-3 mr-auto">
+              <div className="relative">
+                {friend.senderId?.isActiveMyDay || friend.receiverId?.isActiveMyDay && 
+                 friend.senderId?.myDayEndAt > Number(Date.now()) || 
+                 friend.receiverId?.myDayEndAt > Number(Date.now()) ? (
+                  <Link to={`/day/${friend.senderId?._id || friend.receiverId?._id}`}>
+                    <div className="relative">
+                      <img
+                        src={friend.receiverId?.photoUrl || friend.senderId?.photoUrl}
+                        className="h-12 w-12 rounded-full object-cover"
+                        alt="Profile"
+                      />
+                      <div className="absolute inset-0 border-2 border-blue-500 rounded-full animate-pulse"></div>
+                    </div>
+                  </Link>
+                ) : (
+                  <img
+                    src={friend.receiverId?.photoUrl || friend.senderId?.photoUrl}
+                    className="h-12 w-12 rounded-full object-cover"
+                    alt="Profile"
+                  />
+                )}
+                <div className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white ${
+                  friend.receiverId?.isActive || friend.senderId?.isActive 
+                    ? 'bg-green-500' 
+                    : 'bg-gray-300'
+                }`}></div>
+              </div>
+
+              <div className="ml-4 flex-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-gray-900">
                     {friend.receiverId?.name || friend.senderId?.name}
                   </span>
-                  <p className="ms-4 text-sm">
-                    {friend.receiverId?.isActive ||
-                    friend.senderId?.isActive ? (
-                      <div className="h-2 w-2 rounded-full bg-blue-700"></div>
-                    ) : (
-                      <div className="h-2 w-2 rounded-full bg-red-700"></div>
-                    )}
-                  </p>
-                </div>
-                <div className={`flex justify-between mx-3 ${!friend?.lastMessageSeen && friend?.lastMessageSeenUserId?._id !== me?._id ? "font-extrabold" : ""}`}>
-                  <p className="text-sm ">
-                    {friend.lastMessage?.split("").slice(0, 5)}...
-                  </p>
-                  <p className="text-sm ">
+                  <span className="text-xs text-gray-500">
                     {formatLastMessage(friend.lastMessageAt)}
-                  </p>
+                  </span>
                 </div>
+                <p className={`text-sm mt-1 ${
+                  !friend?.lastMessageSeen && friend?.lastMessageSeenUserId?._id !== me?._id 
+                    ? "font-semibold text-gray-900" 
+                    : "text-gray-500"
+                }`}>
+                  {friend.lastMessage?.split("").slice(0, 20).join("")}
+                  {friend.lastMessage?.length > 20 ? "..." : ""}
+                </p>
               </div>
             </NavLink>
-            <div className="relative">
-              <CiMenuKebab onClick={() => setIsDeleteOpen({open: true, id: friend._id})} className="cursor-pointer" />
-              {isDeleteOpen.open && isDeleteOpen.id === friend._id && <DeleteFriend isDeleteOpen={isDeleteOpen} setIsDeleteOpen={setIsDeleteOpen} />}
+
+            <div className="relative ml-2">
+              <button 
+                onClick={() => setIsDeleteOpen({open: true, id: friend._id})}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="Friend options menu"
+              >
+                <CiMenuKebab className="text-gray-500" />
+              </button>
+              {isDeleteOpen.open && isDeleteOpen.id === friend._id && (
+                <DeleteFriend isDeleteOpen={isDeleteOpen} setIsDeleteOpen={setIsDeleteOpen} />
+              )}
             </div>
-            </li>
-          </>
-        );
-      })}
+          </div>
+        </li>
+      ))}
     </ul>
   );
 };

@@ -39,46 +39,51 @@ const Users = ({user}: {user: userTypeCheck}) => {
         }
       },[handleUserScroll])
   return (
-    <>
-                <ul ref={userListRef} className="space-y-2 font-medium overflow-y-auto to flex-grow px-3 h-1/2 ">
-            {users?.map(chatUser => {
-              return (
-                <li key={chatUser._id} className={`${chatUser?.email === user?.email ? "hidden" : "block"}`}>
-                  <NavLink
-                    onClick={() => dispatch(toggle())}
-                    to={`/chat/${chatUser._id}`}
-                    className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                  >
-                    {/* <img
-                      src={chatUser.photoUrl}
-                      className="h-8 w-8 rounded-full"
-                      alt="image not found"
-                    /> */}
-                    {chatUser?.isActiveMyDay && chatUser?.myDayEndAt > Number(Date.now()) ? <Link to={`/day/${chatUser?._id}`}>
-                    <img
-                      src={chatUser.photoUrl}
-                      className="h-8 w-8 rounded-full ring-4 ring-blue-500"
-                      alt="image not found"
-                    />
-                    </Link> : <img
-                      src={chatUser.photoUrl}
-                      className="h-8 w-8 rounded-full"
-                      alt="image not found"
-                    />}
-                    <span className="ms-3 mr-auto">{chatUser.name}</span>
-                    <p className="ms-4 text-sm ">
-                      {chatUser.isActive ? (
-                        <div className="h-2 w-2 rounded-full bg-blue-700"></div>
-                      ) : (
-                        <div className="h-2 w-2 rounded-full bg-red-700"></div>
-                      )}
-                    </p>
-                  </NavLink>
-                </li>
-              );
-            })}
-          </ul>
-    </>
+    <ul ref={userListRef} className="space-y-4 overflow-y-auto px-4 bg-white rounded-lg shadow mx-5">
+      {users?.map(chatUser => {
+        if (chatUser?.email === user?.email) return null;
+        
+        return (
+          <li key={chatUser._id}>
+            <NavLink
+              onClick={() => dispatch(toggle())}
+              to={`/chat/${chatUser._id}`}
+              className="flex items-center p-3 rounded-xl transition-colors"
+            >
+              <div className="relative">
+                {chatUser?.isActiveMyDay && chatUser?.myDayEndAt > Number(Date.now()) ? (
+                  <Link to={`/day/${chatUser?._id}`}>
+                    <div className="relative">
+                      <img
+                        src={chatUser.photoUrl}
+                        className="h-12 w-12 rounded-full object-cover"
+                        alt={chatUser.name}
+                      />
+                      <div className="absolute inset-0 border-2 border-blue-500 rounded-full animate-pulse"></div>
+                    </div>
+                  </Link>
+                ) : (
+                  <img
+                    src={chatUser.photoUrl} 
+                    className="h-12 w-12 rounded-full object-cover"
+                    alt={chatUser.name}
+                  />
+                )}
+                <div className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white ${
+                  chatUser.isActive ? 'bg-green-500' : 'bg-gray-300'
+                }`}></div>
+              </div>
+
+              <div className="ml-4 flex-1">
+                <span className="font-medium text-gray-900">
+                  {chatUser.name}
+                </span>
+              </div>
+            </NavLink>
+          </li>
+        );
+      })}
+    </ul>
   )
 }
 

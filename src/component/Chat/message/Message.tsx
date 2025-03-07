@@ -66,8 +66,8 @@ const Message = ({
                 <div
                   className={`${
                     msg.senderUsername === myInfo.username
-                      ? "absolute right-0 -bottom-2 z-30"
-                      : "absolute left-0 -bottom-2 z-30"
+                      ? "absolute right-0 -bottom-2 z-0"
+                      : "absolute left-0 -bottom-2 z-0"
                   }`}
                 >
                   {msg.emoji ? msg.emoji : ""}
