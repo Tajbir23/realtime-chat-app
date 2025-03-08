@@ -104,93 +104,101 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-100">
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 shadow-lg">
-      <h2 className="text-2xl font-semibold mb-4">Sign Up</h2>
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2" htmlFor="name">
-          Name
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={formState.name}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-md"
-          required
-        />
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4 sm:p-6 md:p-8">
+      <form onSubmit={handleSubmit} className="w-full max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg">
+        <h2 className="text-2xl font-semibold mb-6 text-center">Sign Up</h2>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-2" htmlFor="name">
+            Name
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formState.name}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2" htmlFor="username">
-          Username
-        </label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          value={formState.username}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-md"
-          required
-        />
-      </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-2" htmlFor="username">
+            Username
+          </label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={formState.username}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2" htmlFor="email">
-          Email
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={formState.email}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-md"
-          required
-        />
-      </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-2" htmlFor="email">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formState.email}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
 
-      <div className="mb-4">
-      {loading && <FontAwesomeIcon icon={faSpinner} spinPulse className="text-4xl" />}
-        {formState.photoUrl && !loading && <img src={formState.photoUrl} className="h-20" alt="image not uploaded" />}
-        <label className="block text-sm font-medium mb-2" htmlFor="photo">
-          Photo
-        </label>
-        <input
-          type="file"
-          id="photo"
-          name="photo"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="w-full px-3 py-2 border rounded-md"
-        />
-      </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-2" htmlFor="photo">
+            Photo
+          </label>
+          <div className="flex items-center">
+            <input
+              type="file"
+              id="photo"
+              name="photo"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-describedby="photo-description"
+            />
+            {loading && <FontAwesomeIcon icon={faSpinner} spinPulse className="text-2xl ml-2" />}
+          </div>
+          <p id="photo-description" className="text-xs text-gray-500 mt-1">Upload a profile picture</p>
+          {formState.photoUrl && !loading && (
+            <div className="mt-4">
+              <img src={formState.photoUrl} className="h-20 w-20 object-cover rounded-full mx-auto" alt="Uploaded profile" />
+            </div>
+          )}
+        </div>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2" htmlFor="password">
-          Password
-        </label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={formState.password}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-md"
-          required
-        />
-      </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-2" htmlFor="password">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formState.password}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
 
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-      <button
-        type="submit"
-        className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-800"
-      >
-        Sign Up
-      </button>
-    </form>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Sign Up
+        </button>
+      </form>
     </div>
   );
 };
