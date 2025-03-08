@@ -44,7 +44,7 @@ const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
   if (!file) return;
 
   image.append('file', file)
-  image.append('upload_preset', 'your-upload-preset')
+  image.append('upload_preset', `${import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET}`)
 
   try {
     const response = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUDNAME}/image/upload`, {
